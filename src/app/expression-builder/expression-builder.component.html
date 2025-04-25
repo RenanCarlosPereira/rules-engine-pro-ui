@@ -1,0 +1,14 @@
+<ng-container *ngIf="isBrowser && languageDesc">
+  <code-editor
+    [(ngModel)]="value"
+    (ngModelChange)="onCodeChange($event)"
+    [theme]="'light'"
+    [lineWrapping]="true"
+    [languages]="languages"
+    [language]="languageDesc.name"
+    [setup]="setup"
+    [class]="class"
+    [lineWrapping]="lineWrapping"
+    [placeholder]="'type your expressions here'"
+  ></code-editor>
+</ng-container>

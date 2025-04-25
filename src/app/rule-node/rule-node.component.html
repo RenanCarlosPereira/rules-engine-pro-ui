@@ -1,0 +1,151 @@
+<div class="border rounded-xl p-4 mb-4 shadow-md transition-all duration-300" [ngClass]="{
+  'bg-white': rule.Enabled,
+  'bg-gray-100 grayscale-[60%] opacity-80 brightness-90': !rule.Enabled
+}">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-2">
+    <input
+      class="text-lg font-semibold w-full border-b border-indigo-300 bg-transparent focus:outline-none"
+      [value]="rule.RuleName"
+      (input)="rule.RuleName = $any($event.target).value; emitChange()"
+      placeholder="Rule name"
+    />
+
+
+
+    <div class="flex items-center gap-3 ml-2">
+      <i-lucide [img]="GripVertical" cdkDragHandle class="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-grab" />
+
+      <button type="button" role="switch" [attr.aria-checked]="rule.Enabled ?? true" (click)="toggleEnabled()"
+        class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors duration-300"
+        [ngClass]="rule.Enabled ? 'bg-green-500' : 'bg-gray-300'" title="Enable/Disable rule">
+        <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-300"
+          [ngClass]="rule.Enabled ? 'translate-x-5' : 'translate-x-1'"></span>
+      </button>
+
+      <button (click)="toggleExpanded()" title="Toggle">
+        <i-lucide [img]="isExpanded ? ChevronUp : ChevronDown"
+          class="w-4 h-4 text-blue-600 transition-transform duration-300 ease-in-out hover:scale-110" />
+      </button>
+
+      <button (click)="showActionsModal = true" title="Edit Actions">
+        <i-lucide [img]="Plus"
+          class="w-4 h-4 text-purple-600 hover:text-purple-800 transition-transform hover:scale-110" />
+      </button>
+
+      <button *ngIf="parentRules" (click)="deleteThisRule()" title="Delete rule">
+        <i-lucide [img]="Trash2"
+          class="w-4 h-4 text-red-600 hover:text-red-800 transition-transform hover:scale-110 active:scale-95" />
+      </button>
+    </div>
+    
+
+
+  </div>
+
+  <ng-container *ngIf="isExpanded">
+   
+    <!-- Validators -->
+    <div *ngIf="validationErrors?.length" class="mb-2 text-red-600 text-sm space-y-1">
+      <div *ngFor="let error of validationErrors">{{ error }}</div>
+    </div>
+
+    <!-- Operator -->
+    <div class="mb-2">
+      <label class="text-sm text-gray-600 mr-2">Operator:</label>
+      <div class="flex flex-wrap gap-2 mt-1">
+        <button (click)="setOperator(null)" [class.bg-blue-100]="rule.Operator == null"
+          class="px-3 py-1 text-sm rounded border text-gray-600 hover:bg-blue-50 transition">
+          No operator
+        </button>
+        <button *ngFor="let op of operatorOptions" (click)="setOperator(op)" [class.bg-blue-600]="rule.Operator === op"
+          [class.text-white]="rule.Operator === op" class="px-3 py-1 text-sm rounded border hover:bg-blue-100 transition">
+          {{ op }}
+        </button>
+      </div>
+
+      <div *ngIf="confirmingOperatorClear"
+        class="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mt-2">
+        <p class="text-sm">
+          Changing to "No operator" will remove all inner rules. Are you sure you want to continue?
+        </p>
+        <div class="flex gap-4 mt-2">
+          <button (click)="confirmOperatorChange()"
+            class="px-3 py-1 text-sm rounded bg-yellow-500 text-white hover:bg-yellow-600 transition">
+            Yes, continue
+          </button>
+          <button (click)="cancelOperatorChange()"
+            class="px-3 py-1 text-sm rounded border border-yellow-500 text-yellow-700 hover:bg-yellow-200 transition">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Expression -->
+    <div *ngIf="rule.Operator == null" class="mb-2">
+      <label class="text-sm text-gray-600">Expression:</label>
+      <app-expression-builder [value]="rule.Expression ?? ''" [languageName]="'C#'"
+        (valueChange)="rule.Expression = $event; emitChange()"></app-expression-builder>
+    </div>
+
+    <!-- Local Params -->
+    <div *ngIf="rule.LocalParams?.length" class="mt-4">
+      <h4 class="text-sm font-semibold text-gray-700 mb-2">Local Parameters</h4>
+      <div *ngFor="let param of rule.LocalParams; let i = index" class="mb-2 flex items-center gap-2">
+        <input class="border p-1 text-sm rounded w-1/4" placeholder="Param name" [value]="param.Name"
+          (input)="updateLocalParamName(i, $any($event.target).value)" />
+        <input class="border p-1 text-sm rounded w-2/4" placeholder="Param expression" [value]="param.Expression"
+          (input)="updateLocalParamExpression(i, $any($event.target).value)" />
+        <button (click)="deleteLocalParam(i)" title="Delete param">
+          <i-lucide [img]="Trash2"
+            class="w-4 h-4 text-red-500 hover:text-red-700 transition-transform hover:scale-110 active:scale-95" />
+        </button>
+      </div>
+    </div>
+
+    <button (click)="addLocalParam()"
+      class="flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
+      <i-lucide [img]="Plus" class="w-4 h-4" /> Add local parameter
+    </button>
+
+    <!-- Error Message -->
+    <div class="mt-2">
+      <label class="text-xs text-gray-500">Error Message:</label>
+      <input class="border p-1 text-xs rounded w-full mt-1" placeholder="Custom error message"
+        [value]="rule.ErrorMessage ?? ''"
+        (input)="rule.ErrorMessage = $any($event.target).value; emitChange()" />
+    </div>
+
+    <!-- Subrules -->
+    <div *ngIf="isGroupRule" class="mt-4 border-l-2 pl-4 border-indigo-300">
+      <ng-container *ngIf="rule.Rules?.length; else emptyGroup">
+        <div cdkDropList [cdkDropListData]="rule.Rules" class="space-y-2" (cdkDropListDropped)="dropRule($event)">
+          <div *ngFor="let child of rule.Rules; let i = index" cdkDrag>
+            <app-rule-node [rule]="child" [parentRules]="rule.Rules" [indexInParent]="i"></app-rule-node>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #emptyGroup>
+        <p class="text-sm italic text-gray-400 mb-2">No rules yet.</p>
+      </ng-template>
+      <button (click)="addChildRule()"
+        class="flex items-center gap-1 text-green-700 text-sm mt-2 hover:underline transition-transform hover:scale-105">
+        <i-lucide [img]="Plus" class="w-4 h-4" /> Add rule
+      </button>
+    </div>
+  </ng-container>
+</div>
+
+<!-- Actions Modal -->
+ 
+<div *ngIf="showActionsModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 relative">
+    <app-rule-actions-editor
+  [rule]="rule"
+  [onClose]="closeActionsModal.bind(this)">
+</app-rule-actions-editor>
+  </div>
+</div>

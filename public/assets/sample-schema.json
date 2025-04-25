@@ -1,0 +1,58 @@
+{
+    "type": "object",
+    "properties": {
+        "person": {
+            "type": "object",
+            "properties": {
+                "salary": {
+                    "title": "salary",
+                    "type": [
+                        "null"
+                    ]
+                },
+                "existingDebt": {
+                    "title": "existingDebt",
+                    "type": [
+                        "null"
+                    ]
+                },
+                "yearsAtCurrentJob": {
+                    "title": "yearsAtCurrentJob",
+                    "type": [
+                        "null"
+                    ]
+                },
+                "creditScore": {
+                    "title": "creditScore",
+                    "type": [
+                        "null"
+                    ]
+                },
+                "age": {
+                    "title": "age",
+                    "type": [
+                        "null"
+                    ]
+                },
+                "country": {
+                    "title": "country",
+                    "type": [
+                        "null"
+                    ]
+                },
+                "hasDefaultedLoans": {
+                    "title": "hasDefaultedLoans",
+                    "type": [
+                        "null"
+                    ]
+                },
+                "employerVerified": {
+                    "title": "employerVerified",
+                    "type": [
+                        "null"
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,226 @@
+{
+  "WorkflowName": "CreditApprovalWorkflow",
+  "GlobalParams": [
+    {
+      "Name": "MinAge",
+      "Expression": "21"
+    },
+    {
+      "Name": "AllowedCountries",
+      "Expression": "Utils.StringArray(\"USA\", \"Canada\", \"Ireland\")"
+    },
+    {
+      "Name": "MinCreditScore",
+      "Expression": "650"
+    }
+  ],
+  "Rules": [
+    {
+      "RuleName": "MasterEligibilityRule",
+      "Enabled": true,
+      "Operator": "And",
+      "Rules": [
+        {
+          "RuleName": "AgeValidation",
+          "Enabled": true,
+          "Expression": "person.age >= MinAge && person.age <= 65",
+          "RuleExpressionType": "LambdaExpression",
+          "LocalParams": [],
+          "Actions": {},
+          "Properties": {}
+        },
+        {
+          "RuleName": "CountryValidation",
+          "Enabled": true,
+          "Expression": "AllowedCountries.Contains(person.country) && person.country != \"Russia\"",
+          "RuleExpressionType": "LambdaExpression",
+          "LocalParams": [],
+          "Actions": {},
+          "Properties": {}
+        },
+        {
+          "RuleName": "FinancialOrEmploymentCriteria",
+          "Enabled": true,
+          "Operator": "Or",
+          "Rules": [
+            {
+              "RuleName": "StrongFinancialBackground",
+              "Enabled": true,
+              "Operator": "And",
+              "Rules": [
+                {
+                  "RuleName": "SalaryCheck",
+                  "Enabled": true,
+                  "Expression": "person.salary >= 60000",
+                  "RuleExpressionType": "LambdaExpression",
+                  "LocalParams": [],
+                  "Actions": {},
+                  "Properties": {}
+                },
+                {
+                  "RuleName": "DebtRatioCheck",
+                  "Enabled": true,
+                  "Expression": "(person.existingDebt / person.salary) < 0.3",
+                  "RuleExpressionType": "LambdaExpression",
+                  "LocalParams": [],
+                  "Actions": {},
+                  "Properties": {}
+                }
+              ],
+              "LocalParams": [
+                {
+                  "Name": "DebtRatio",
+                  "Expression": "person.existingDebt / person.salary"
+                }
+              ],
+              "Actions": {},
+              "Properties": {},
+              "RuleExpressionType": "LambdaExpression"
+            },
+            {
+              "RuleName": "LongEmploymentAndCleanHistory",
+              "Enabled": true,
+              "Operator": "And",
+              "Rules": [
+                {
+                  "RuleName": "EmploymentDuration",
+                  "Enabled": true,
+                  "Expression": "person.yearsAtCurrentJob >= 5",
+                  "RuleExpressionType": "LambdaExpression",
+                  "LocalParams": [],
+                  "Actions": {},
+                  "Properties": {}
+                },
+                {
+                  "RuleName": "NoDefaults",
+                  "Enabled": true,
+                  "Expression": "!person.hasDefaultedLoans",
+                  "RuleExpressionType": "LambdaExpression",
+                  "LocalParams": [],
+                  "Actions": {},
+                  "Properties": {}
+                }
+              ],
+              "LocalParams": [],
+              "Actions": {},
+              "Properties": {},
+              "RuleExpressionType": "LambdaExpression"
+            }
+          ],
+          "LocalParams": [],
+          "Actions": {},
+          "Properties": {},
+          "RuleExpressionType": "LambdaExpression"
+        }
+      ],
+      "LocalParams": [
+        {
+          "Name": "EligibilityScore",
+          "Expression": "(person.salary - person.existingDebt) + (person.yearsAtCurrentJob * 1000) + (person.creditScore / 10)"
+        }
+      ],
+      "Actions": {
+        "OnSuccess": {
+          "Name": "OutputExpression",
+          "Context": {
+            "Expression": "EligibilityScore"
+          }
+        },
+        "OnFailure": {
+          "Name": "EvaluateRule",
+          "Context": {
+            "workflowName": "CreditApprovalWorkflow",
+            "ruleName": "RiskAssessmentRule"
+          }
+        }
+      },
+      "Properties": {},
+      "RuleExpressionType": "LambdaExpression"
+    },
+    {
+      "RuleName": "RiskAssessmentRule",
+      "Enabled": true,
+      "Operator": "And",
+      "Rules": [
+        {
+          "RuleName": "DebtOverload",
+          "Enabled": true,
+          "Expression": "person.existingDebt > 30000",
+          "RuleExpressionType": "LambdaExpression",
+          "LocalParams": [],
+          "Actions": {},
+          "Properties": {}
+        },
+        {
+          "RuleName": "LowCreditScore",
+          "Enabled": true,
+          "Expression": "person.creditScore < MinCreditScore",
+          "RuleExpressionType": "LambdaExpression",
+          "LocalParams": [],
+          "Actions": {},
+          "Properties": {}
+        }
+      ],
+      "Actions": {
+        "OnSuccess": {
+          "Name": "OutputExpression",
+          "Context": {
+            "Expression": "\"High risk identified\""
+          }
+        },
+        "OnFailure": {
+          "Name": "EvaluateRule",
+          "Context": {
+            "workflowName": "CreditApprovalWorkflow",
+            "ruleName": "EmploymentValidationRule"
+          }
+        }
+      },
+      "LocalParams": [],
+      "Properties": {},
+      "RuleExpressionType": "LambdaExpression"
+    },
+    {
+      "RuleName": "EmploymentValidationRule",
+      "Enabled": true,
+      "Operator": "And",
+      "Rules": [
+        {
+          "RuleName": "MinEmploymentYears",
+          "Enabled": true,
+          "Expression": "person.yearsAtCurrentJob >= 2",
+          "RuleExpressionType": "LambdaExpression",
+          "LocalParams": [],
+          "Actions": {},
+          "Properties": {}
+        },
+        {
+          "RuleName": "EmployerVerificationStatus",
+          "Enabled": true,
+          "Expression": "person.employerVerified == true",
+          "RuleExpressionType": "LambdaExpression",
+          "LocalParams": [],
+          "Actions": {},
+          "Properties": {}
+        }
+      ],
+      "Actions": {
+        "OnSuccess": {
+          "Name": "OutputExpression",
+          "Context": {
+            "Expression": "\"Employment verified\""
+          }
+        },
+        "OnFailure": {
+          "Name": "OutputExpression",
+          "Context": {
+            "Expression": "\"1+1\""
+          }
+        }
+      },
+      "LocalParams": [],
+      "Properties": {},
+      "RuleExpressionType": "LambdaExpression"
+    }
+  ]
+}
