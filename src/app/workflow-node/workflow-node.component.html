@@ -1,124 +1,119 @@
-<div class="p-6 bg-gray-100 rounded-xl shadow-md">
+<!-- Toolbar Menu -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b pb-3">
+  <h2 class="text-xl font-bold text-indigo-800 flex items-center gap-2 w-full sm:w-auto">
+    <i-lucide [img]="WorkflowIcon" class="w-5 h-5 text-indigo-600" />
+    Workflow Editor
+  </h2>
 
-  <!-- Toolbar Menu -->
-  <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b pb-3">
-    <h2 class="text-xl font-bold text-indigo-800 flex items-center gap-2 w-full sm:w-auto">
-      <i-lucide [img]="WorkflowIcon" class="w-5 h-5 text-indigo-600" />
-      Workflow Editor
-    </h2>
-
-    <div class="flex flex-wrap justify-start sm:justify-end items-center gap-2 w-full sm:w-auto">
-      <button (click)="addRootRule()"
-        class="flex items-center gap-1 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 shadow-sm">
-        <i-lucide [img]="Plus" class="w-4 h-4" /> Add Rule
-      </button>
-
-      <button (click)="toggleModal()"
-        class="flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 shadow-sm">
-        <i-lucide [img]="CodeIcon" class="w-4 h-4" /> View JSON
-      </button>
-
-      <button (click)="loadSampleWorkflow()"
-        class="flex items-center gap-1 px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 shadow-sm">
-        <i-lucide [img]="FilePlusIcon" class="w-4 h-4" /> Load Sample
-      </button>
-
-      <button (click)="resetWorkflow()"
-        class="flex items-center gap-1 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 shadow-sm">
-        <i-lucide [img]="RotateCcw" class="w-4 h-4" /> Reset
-      </button>
-    </div>
-  </div>
-
-  <div class="mb-4">
-    <input
-      class="text-2xl font-bold text-indigo-800 bg-transparent w-full border-b border-indigo-200 focus:outline-none"
-      [value]="workflow.workflowName" (input)="updateWorkflowName($any($event.target).value)"
-      placeholder="Workflow name" />
-  </div>
-  <div class="mb-4">
-    <div *ngIf="validationMessages.length"
-      class="bg-red-100 border border-red-300 rounded p-3 text-red-700 text-sm mt-2">
-      <ul class="list-disc pl-5">
-        <li *ngFor="let error of validationMessages">{{ error }}</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Compact Global Parameters Card -->
-  <div class="bg-white rounded-lg shadow-sm p-3 mb-4 border border-gray-200">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="font-medium text-gray-700 text-sm flex items-center gap-1">
-        <i-lucide [img]="SettingsIcon" class="w-4 h-4 text-blue-500" />
-        Global Parameters
-      </h3>
-    </div>
-
-    <div *ngIf="workflow.globalParams?.length; else noParams">
-      <div *ngFor="let param of workflow.globalParams; let i = index" class="mb-1 flex items-center gap-1">
-        <input class="border border-gray-300 px-2 py-1 text-xs rounded w-1/6" placeholder="name" [value]="param.name"
-          (input)="updateGlobalParamName(i, $any($event.target).value)" />
-        <input class="border border-gray-300 px-2 py-1 text-xs rounded flex-1" placeholder="expression"
-          [value]="param.expression" (input)="updateGlobalParamExpression(i, $any($event.target).value)" />
-        <button (click)="deleteGlobalParam(i)" class="text-red-500 hover:text-red-600">
-          <i-lucide [img]="Trash2" class="w-3.5 h-3.5" />
-        </button>
-      </div>
-    </div>
-
-    <ng-template #noParams>
-      <p class="text-xs text-gray-400 italic mb-1">No global parameters</p>
-    </ng-template>
-
-    <button (click)="addGlobalParam()"
-      class="mt-1 text-xs text-blue-600 hover:underline hover:scale-105 transition-transform flex items-center gap-1">
-      <i-lucide [img]="Plus" class="w-3.5 h-3.5" /> Add parameter
-    </button>
-  </div>
-
-
-  <!-- rules -->
-  <h3 class="text-xl font-semibold text-indigo-700 mb-3">rules</h3>
-
-  <div class="mt-4 border-l-2 pl-4 border-indigo-300">
-    <ng-container *ngIf="workflow.rules.length > 0; else emptyGroup">
-      <div cdkDropList (cdkDropListDropped)="reorderRules($event)">
-        <div *ngFor="let rule of workflow.rules; let i = index" cdkDrag>
-          <app-rule-node [rule]="rule" [parentRules]="workflow.rules" [indexInParent]="i"
-            (ruleChanged)="syncJsonText()"></app-rule-node>
-        </div>
-      </div>
-    </ng-container>
-
-    <ng-template #emptyGroup>
-      <p class="text-sm italic text-gray-400 mb-2">No rules yet.</p>
-    </ng-template>
-
+  <div class="flex flex-wrap justify-start sm:justify-end items-center gap-2 w-full sm:w-auto">
     <button (click)="addRootRule()"
-      class="flex items-center gap-1 text-green-700 text-sm mt-2 hover:underline transition-transform hover:scale-105">
-      <i-lucide [img]="Plus" class="w-4 h-4" /> Add rule
+      class="flex items-center gap-1 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 shadow-sm">
+      <i-lucide [img]="Plus" class="w-4 h-4" /> Add Rule
+    </button>
+
+    <button (click)="toggleModal()"
+      class="flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 shadow-sm">
+      <i-lucide [img]="CodeIcon" class="w-4 h-4" /> View JSON
+    </button>
+
+    <button (click)="loadSampleWorkflow()"
+      class="flex items-center gap-1 px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 shadow-sm">
+      <i-lucide [img]="FilePlusIcon" class="w-4 h-4" /> Load Sample
+    </button>
+
+    <button (click)="resetWorkflow()"
+      class="flex items-center gap-1 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 shadow-sm">
+      <i-lucide [img]="RotateCcw" class="w-4 h-4" /> Reset
     </button>
   </div>
+</div>
 
-  <!-- Schema Editor -->
-  <div class="mt-4 border-l-2 pl-4 border-indigo-300">
-    <app-context-schema-editor [workflow]="workflow"></app-context-schema-editor>
+<div class="mb-4">
+  <input class="text-2xl font-bold text-indigo-800 bg-transparent w-full border-b border-indigo-200 focus:outline-none"
+    [value]="workflow.workflowName" (input)="updateWorkflowName($any($event.target).value)"
+    placeholder="Workflow name" />
+</div>
+<div class="mb-4">
+  <div *ngIf="validationMessages.length" class="bg-red-100 border border-red-300 rounded p-3 text-red-700 text-sm mt-2">
+    <ul class="list-disc pl-5">
+      <li *ngFor="let error of validationMessages">{{ error }}</li>
+    </ul>
   </div>
-  <!-- JSON Modal -->
-  <div *ngIf="showJsonModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-xl w-[90%] max-w-3xl max-h-[90vh] p-6 relative overflow-hidden">
-      <h2 class="text-lg font-bold text-gray-800 mb-4">Workflow JSON</h2>
+</div>
 
-      <div class="overflow-auto max-h-[60vh]">
-        <app-expression-builder [value]="jsonText" (valueChange)="applyJsonChanges($event)"
-          [languageName]="'json'"></app-expression-builder>
-      </div>
+<!-- Compact Global Parameters Card -->
+<div class="bg-white rounded-lg shadow-sm p-3 mb-4 border border-gray-200">
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="font-medium text-gray-700 text-sm flex items-center gap-1">
+      <i-lucide [img]="SettingsIcon" class="w-4 h-4 text-blue-500" />
+      Global Parameters
+    </h3>
+  </div>
 
-      <div class="mt-4 text-right">
-        <button (click)="toggleModal()" class="px-4 py-1 text-sm text-white bg-indigo-600 rounded hover:bg-indigo-700">
-          Close
-        </button>
+  <div *ngIf="workflow.globalParams?.length; else noParams">
+    <div *ngFor="let param of workflow.globalParams; let i = index" class="mb-1 flex items-center gap-1">
+      <input class="border border-gray-300 px-2 py-1 text-xs rounded w-1/6" placeholder="name" [value]="param.name"
+        (input)="updateGlobalParamName(i, $any($event.target).value)" />
+      <input class="border border-gray-300 px-2 py-1 text-xs rounded flex-1" placeholder="expression"
+        [value]="param.expression" (input)="updateGlobalParamExpression(i, $any($event.target).value)" />
+      <button (click)="deleteGlobalParam(i)" class="text-red-500 hover:text-red-600">
+        <i-lucide [img]="Trash2" class="w-3.5 h-3.5" />
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noParams>
+    <p class="text-xs text-gray-400 italic mb-1">No global parameters</p>
+  </ng-template>
+
+  <button (click)="addGlobalParam()"
+    class="mt-1 text-xs text-blue-600 hover:underline hover:scale-105 transition-transform flex items-center gap-1">
+    <i-lucide [img]="Plus" class="w-3.5 h-3.5" /> Add parameter
+  </button>
+</div>
+
+
+<!-- rules -->
+<h3 class="text-xl font-semibold text-indigo-700 mb-3">rules</h3>
+
+<div class="mt-4 border-l-2 pl-4 border-indigo-300">
+  <ng-container *ngIf="workflow.rules.length > 0; else emptyGroup">
+    <div cdkDropList (cdkDropListDropped)="reorderRules($event)">
+      <div *ngFor="let rule of workflow.rules; let i = index" cdkDrag>
+        <app-rule-node [rule]="rule" [parentRules]="workflow.rules" [indexInParent]="i"
+          (ruleChanged)="syncJsonText()"></app-rule-node>
       </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyGroup>
+    <p class="text-sm italic text-gray-400 mb-2">No rules yet.</p>
+  </ng-template>
+
+  <button (click)="addRootRule()"
+    class="flex items-center gap-1 text-green-700 text-sm mt-2 hover:underline transition-transform hover:scale-105">
+    <i-lucide [img]="Plus" class="w-4 h-4" /> Add rule
+  </button>
+</div>
+
+<!-- Schema Editor -->
+<div class="mt-4 border-l-2 pl-4 border-indigo-300">
+  <app-context-schema-editor [workflow]="workflow"></app-context-schema-editor>
+</div>
+<!-- JSON Modal -->
+<div *ngIf="showJsonModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl w-[90%] max-w-3xl max-h-[90vh] p-6 relative overflow-hidden">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">Workflow JSON</h2>
+
+    <div class="overflow-auto max-h-[60vh]">
+      <app-expression-builder [value]="jsonText" (valueChange)="applyJsonChanges($event)"
+        [languageName]="'json'"></app-expression-builder>
+    </div>
+
+    <div class="mt-4 text-right">
+      <button (click)="toggleModal()" class="px-4 py-1 text-sm text-white bg-indigo-600 rounded hover:bg-indigo-700">
+        Close
+      </button>
     </div>
   </div>
 </div>
