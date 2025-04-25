@@ -18,13 +18,13 @@ export class RuleActionsEditorComponent {
 
   updateActionName(type: 'onSuccess' | 'onFailure', name: string) {
     this.rule.actions ??= {};
-    this.rule.actions[type] ??= { name: '', Context: {} };
+    this.rule.actions[type] ??= { name: '', context: {} };
     this.rule.actions[type]!.name = name;
   }
 
   addAction(type: 'onSuccess' | 'onFailure') {
     this.rule.actions ??= {};
-    this.rule.actions[type] = { name: '', Context: {} };
+    this.rule.actions[type] = { name: '', context: {} };
   }
 
   removeAction(type: 'onSuccess' | 'onFailure') {
@@ -32,7 +32,7 @@ export class RuleActionsEditorComponent {
   }
 
   getContextKeys(type: 'onSuccess' | 'onFailure'): string[] {
-    return Object.keys(this.rule.actions?.[type]?.Context || {});
+    return Object.keys(this.rule.actions?.[type]?.context || {});
   }
 
   updateContextValue(
@@ -40,18 +40,18 @@ export class RuleActionsEditorComponent {
     key: string,
     value: string
   ) {
-    this.rule.actions?.[type]?.Context &&
-      (this.rule.actions[type]!.Context[key] = value);
+    this.rule.actions?.[type]?.context &&
+      (this.rule.actions[type]!.context[key] = value);
   }
 
   addContextEntry(type: 'onSuccess' | 'onFailure') {
     this.rule.actions ??= {};
-    this.rule.actions[type] ??= { name: '', Context: {} };
-    this.rule.actions![type]!.Context![''] = '';
+    this.rule.actions[type] ??= { name: '', context: {} };
+    this.rule.actions![type]!.context![''] = '';
   }
 
   deleteContextEntry(type: 'onSuccess' | 'onFailure', key: string) {
-    delete this.rule.actions?.[type]?.Context?.[key];
+    delete this.rule.actions?.[type]?.context?.[key];
   }
 
   onContextKeyBlur(
@@ -59,7 +59,7 @@ export class RuleActionsEditorComponent {
     index: number,
     newKey: string
   ) {
-    const context = this.rule.actions?.[type]?.Context;
+    const context = this.rule.actions?.[type]?.context;
     if (!context) return;
 
     const keys = Object.keys(context);

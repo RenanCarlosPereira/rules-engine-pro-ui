@@ -20,7 +20,7 @@
       <div *ngFor="let key of getContextKeys('onSuccess'); let i = index" class="flex gap-2 mb-2">
         <input class="border p-1 text-xs rounded w-1/4" [value]="key"
           (blur)="onContextKeyBlur('onSuccess', i, $any($event.target).value)" />
-        <input class="border p-1 text-xs rounded w-2/4" [value]="rule.actions?.onSuccess?.Context![key]"
+        <input class="border p-1 text-xs rounded w-2/4" [value]="rule.actions?.onSuccess?.context![key]"
           (input)="updateContextValue('onSuccess', key, $any($event.target).value)" />
         <button (click)="deleteContextEntry('onSuccess', key)">
           <i-lucide [img]="Trash2" class="w-4 h-4 text-red-500" />
@@ -57,7 +57,7 @@
       <div *ngFor="let key of getContextKeys('onFailure'); let i = index" class="flex gap-2 mb-2">
         <input class="border p-1 text-xs rounded w-1/4" [value]="key"
           (blur)="onContextKeyBlur('onFailure', i, $any($event.target).value)" />
-        <input class="border p-1 text-xs rounded w-2/4" [value]="rule.actions!.onFailure!.Context![key]"
+        <input class="border p-1 text-xs rounded w-2/4" [value]="rule.actions!.onFailure!.context![key]"
           (input)="updateContextValue('onFailure', key, $any($event.target).value)" />
         <button (click)="deleteContextEntry('onFailure', key)">
           <i-lucide [img]="Trash2" class="w-4 h-4 text-red-500" />

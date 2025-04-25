@@ -75,6 +75,7 @@ export class RuleNodeComponent implements OnInit {
 
   closeActionsModal() {
     this.showActionsModal = false;
+    this.emitChange();
   }
 
   validateRule(rule: Rule): string[] {
@@ -194,7 +195,7 @@ export class RuleNodeComponent implements OnInit {
   }
 
   addAction(type: 'onSuccess' | 'onFailure') {
-    this.rule.actions![type] = { name: '', Context: {} };
+    this.rule.actions![type] = { name: '', context: {} };
     this.emitChange();
   }
 
@@ -208,21 +209,21 @@ export class RuleNodeComponent implements OnInit {
     this.emitChange();
   }
 
-  getContextKeys(type: 'onSuccess' | 'onFailure'): string[] {
-    return Object.keys(this.rule.actions?.[type]?.Context ?? {});
+  getcontextKeys(type: 'onSuccess' | 'onFailure'): string[] {
+    return Object.keys(this.rule.actions?.[type]?.context ?? {});
   }
 
-  addContextEntry(type: 'onSuccess' | 'onFailure') {
-    this.rule.actions![type]!.Context![''] = '';
+  addcontextEntry(type: 'onSuccess' | 'onFailure') {
+    this.rule.actions![type]!.context![''] = '';
     this.emitChange();
   }
 
-  updateContextKey(
+  updatecontextKey(
     type: 'onSuccess' | 'onFailure',
     index: number,
     newKey: string
   ) {
-    const context = this.rule.actions![type]!.Context!;
+    const context = this.rule.actions![type]!.context!;
     const oldKey = Object.keys(context)[index];
     const value = context[oldKey];
     delete context[oldKey];
@@ -230,26 +231,26 @@ export class RuleNodeComponent implements OnInit {
     this.emitChange();
   }
 
-  updateContextValue(
+  updatecontextValue(
     type: 'onSuccess' | 'onFailure',
     key: string,
     value: string
   ) {
-    this.rule.actions![type]!.Context![key] = value;
+    this.rule.actions![type]!.context![key] = value;
     this.emitChange();
   }
 
-  deleteContextEntry(type: 'onSuccess' | 'onFailure', key: string) {
-    delete this.rule.actions![type]!.Context![key];
+  deletecontextEntry(type: 'onSuccess' | 'onFailure', key: string) {
+    delete this.rule.actions![type]!.context![key];
     this.emitChange();
   }
 
-  onContextKeyBlur(
+  oncontextKeyBlur(
     type: 'onSuccess' | 'onFailure',
     index: number,
     newKey: string
   ) {
-    const context = this.rule.actions![type]!.Context!;
+    const context = this.rule.actions![type]!.context!;
     const oldKey = Object.keys(context)[index];
     if (oldKey !== newKey && newKey.trim()) {
       const value = context[oldKey];
