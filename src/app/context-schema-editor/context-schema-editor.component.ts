@@ -91,7 +91,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
 
   
   loadSchema() {
-    this.http.post<JsonSchema>('https://localhost:7134/identifiers', this.workflow).subscribe(data => {
+    this.http.post<JsonSchema>('https://rules-engine-pro-api.onrender.com/identifiers', this.workflow).subscribe(data => {
       if (!data || !data.properties) return;
       this.schema = data;
       console.log('schema data', data);
@@ -149,7 +149,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
       inputs: inputs
     };
 
-    this.http.post<Response>(`https://localhost:7134/execute?ruleName=${encodeURIComponent(rule.RuleName)}`, payload)
+    this.http.post<Response>(`https://rules-engine-pro-api.onrender.com/execute?ruleName=${encodeURIComponent(rule.RuleName)}`, payload)
       .subscribe(response => {
         this.finalContext = response;
       });
