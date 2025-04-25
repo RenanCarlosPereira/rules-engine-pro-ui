@@ -1,0 +1,5 @@
+services:
+  - type: static
+    name: rules-engine-pro-ui
+    env: static
+    staticPublishPath: dist\rules-engine-ui
