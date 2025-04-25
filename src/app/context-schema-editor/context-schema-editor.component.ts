@@ -1,9 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges
-} from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +9,7 @@ import {
   CheckCircleIcon,
   FileTextIcon,
   LayoutGridIcon,
-  Settings2Icon
+  Settings2Icon,
 } from 'lucide-angular';
 
 import { Workflow } from '../models/workflow.model';
@@ -32,7 +27,12 @@ interface JsonSchema {
 @Component({
   standalone: true,
   selector: 'app-context-schema-editor',
-  imports: [CommonModule, FormsModule, LucideAngularModule, ExpressionBuilderComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LucideAngularModule,
+    ExpressionBuilderComponent,
+  ],
   templateUrl: 'context-schema-editor.component.html',
 })
 export class ContextSchemaEditorComponent implements OnChanges {
@@ -62,13 +62,13 @@ export class ContextSchemaEditorComponent implements OnChanges {
     }
   }
 
-  get availableRules(): { rule: Rule, depth: number }[] {
+  get availableRules(): { rule: Rule; depth: number }[] {
     return this.getAllRules(this.workflow);
   }
-  
-  private getAllRules(workflow: Workflow): { rule: Rule, depth: number }[] {
-    const rules: { rule: Rule, depth: number }[] = [];
-  
+
+  private getAllRules(workflow: Workflow): { rule: Rule; depth: number }[] {
+    const rules: { rule: Rule; depth: number }[] = [];
+
     const traverse = (rule: Rule, depth: number) => {
       rules.push({ rule, depth });
       if (Array.isArray(rule.Rules)) {
@@ -77,11 +77,11 @@ export class ContextSchemaEditorComponent implements OnChanges {
         }
       }
     };
-  
+
     for (const rule of workflow.Rules || []) {
       traverse(rule, 0);
     }
-  
+
     return rules;
   }
 
@@ -89,18 +89,22 @@ export class ContextSchemaEditorComponent implements OnChanges {
     return Object.keys(this.fieldMap);
   }
 
-  
   loadSchema() {
-    this.http.post<JsonSchema>('https://rules-engine-pro-api.onrender.com/identifiers', this.workflow).subscribe(data => {
-      if (!data || !data.properties) return;
-      this.schema = data;
-      console.log('schema data', data);
-      const paths = this.extractPaths(data.properties);
-      this.fieldMap = {};
-      for (const path of paths) {
-        this.fieldMap[path] = { type: '', value: '' };
-      }
-    });
+    this.http
+      .post<JsonSchema>(
+        'https://rules-engine-pro-api.onrender.com/identifiers',
+        this.workflow
+      )
+      .subscribe((data) => {
+        if (!data || !data.properties) return;
+        this.schema = data;
+        console.log('schema data', data);
+        const paths = this.extractPaths(data.properties);
+        this.fieldMap = {};
+        for (const path of paths) {
+          this.fieldMap[path] = { type: '', value: '' };
+        }
+      });
   }
 
   extractPaths(properties: Record<string, JsonSchema>, prefix = ''): string[] {
@@ -126,7 +130,10 @@ export class ContextSchemaEditorComponent implements OnChanges {
 
     const fields = this.fieldMap;
 
-    const buildFromSchema = (properties: Record<string, JsonSchema>, pathPrefix = ''): any => {
+    const buildFromSchema = (
+      properties: Record<string, JsonSchema>,
+      pathPrefix = ''
+    ): any => {
       const result: any = {};
       for (const key in properties) {
         const field = properties[key];
@@ -146,22 +153,35 @@ export class ContextSchemaEditorComponent implements OnChanges {
 
     const payload = {
       workflow: this.workflow,
-      inputs: inputs
+      inputs: inputs,
     };
 
-    this.http.post<Response>(`https://rules-engine-pro-api.onrender.com/execute?ruleName=${encodeURIComponent(rule.RuleName)}`, payload)
-      .subscribe(response => {
+    this.http
+      .post<Response>(
+        `https://rules-engine-pro-api.onrender.com/execute?ruleName=${encodeURIComponent(
+          rule.RuleName
+        )}`,
+        payload
+      )
+      .subscribe((response) => {
         this.finalContext = response;
       });
   }
 
   private parseValue(type: string, value: any): any {
     switch (type) {
-      case 'number': return Number(value);
-      case 'boolean': return value === 'true' || value === true;
+      case 'number':
+        return Number(value);
+      case 'boolean':
+        return value === 'true' || value === true;
       case 'object':
-        try { return JSON.parse(value); } catch { return {}; }
-      default: return value;
+        try {
+          return JSON.parse(value);
+        } catch {
+          return {};
+        }
+      default:
+        return value;
     }
   }
 }

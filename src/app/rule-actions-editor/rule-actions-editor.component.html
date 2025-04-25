@@ -1,6 +1,7 @@
 <h2 class="text-lg font-semibold mb-4">Edit Actions</h2>
 
-<button (click)="onClose()" class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold">&times;</button>
+<button (click)="onClose()"
+  class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold">&times;</button>
 
 <!-- OnSuccess Action -->
 <div class="mb-6">
@@ -8,8 +9,7 @@
     <label class="text-sm text-gray-600">OnSuccess Name:</label>
     <div class="flex items-center gap-2 mt-1">
       <input class="border p-1 text-sm rounded w-1/2" placeholder="Success action name"
-        [value]="rule.Actions?.OnSuccess?.Name"
-        (input)="updateActionName('OnSuccess', $any($event.target).value)" />
+        [value]="rule.Actions?.OnSuccess?.Name" (input)="updateActionName('OnSuccess', $any($event.target).value)" />
       <button (click)="removeAction('OnSuccess')">
         <i-lucide [img]="Trash2" class="w-4 h-4 text-red-600" />
       </button>
@@ -26,13 +26,15 @@
           <i-lucide [img]="Trash2" class="w-4 h-4 text-red-500" />
         </button>
       </div>
-      <button (click)="addContextEntry('OnSuccess')" class="text-xs flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
+      <button (click)="addContextEntry('OnSuccess')"
+        class="text-xs flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
         <i-lucide [img]="Plus" class="w-4 h-4" /> Add context entry
       </button>
     </div>
   </div>
   <ng-template #addOnSuccess>
-    <button (click)="addAction('OnSuccess')" class="flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
+    <button (click)="addAction('OnSuccess')"
+      class="flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
       <i-lucide [img]="Plus" class="w-4 h-4" /> Add OnSuccess Action
     </button>
   </ng-template>
@@ -44,8 +46,7 @@
     <label class="text-sm text-gray-600">OnFailure Name:</label>
     <div class="flex items-center gap-2 mt-1">
       <input class="border p-1 text-sm rounded w-1/2" placeholder="Failure action name"
-        [value]="rule.Actions?.OnFailure?.Name"
-        (input)="updateActionName('OnFailure', $any($event.target).value)" />
+        [value]="rule.Actions?.OnFailure?.Name" (input)="updateActionName('OnFailure', $any($event.target).value)" />
       <button (click)="removeAction('OnFailure')">
         <i-lucide [img]="Trash2" class="w-4 h-4 text-red-600" />
       </button>
@@ -62,13 +63,15 @@
           <i-lucide [img]="Trash2" class="w-4 h-4 text-red-500" />
         </button>
       </div>
-      <button (click)="addContextEntry('OnFailure')" class="text-xs flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
+      <button (click)="addContextEntry('OnFailure')"
+        class="text-xs flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
         <i-lucide [img]="Plus" class="w-4 h-4" /> Add context entry
       </button>
     </div>
   </div>
   <ng-template #addOnFailure>
-    <button (click)="addAction('OnFailure')" class="flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
+    <button (click)="addAction('OnFailure')"
+      class="flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
       <i-lucide [img]="Plus" class="w-4 h-4" /> Add OnFailure Action
     </button>
   </ng-template>

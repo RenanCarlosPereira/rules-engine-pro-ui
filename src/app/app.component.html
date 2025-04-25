@@ -1,78 +1,60 @@
 <div class="min-h-screen flex flex-col">
-    <!-- Header -->
-    <header class="bg-white shadow px-4 py-3 flex items-center justify-between md:px-6">
-      <!-- Left: Logo and App name -->
-      <div class="flex items-center gap-2">
-        <i-lucide [img]="GripVertical" class="w-5 h-5 text-blue-600"></i-lucide>
-        <h1 class="text-xl font-bold text-gray-800">Rules Engine</h1>
-      </div>
-  
-      <!-- Right: Mobile menu toggle and user avatar -->
-      <div class="flex items-center gap-4">
-        <!-- Burger Menu -->
-        <button class="md:hidden text-gray-600" (click)="menuOpen = !menuOpen">
-          <i-lucide [img]="Menu" class="w-6 h-6"></i-lucide>
-        </button>
-  
-        <!-- User avatar dropdown -->
-        <div class="relative" (click)="userMenuOpen = !userMenuOpen">
-          <img
-            src="https://i.pravatar.cc/40?u=user"
-            alt="User Avatar"
-            class="w-8 h-8 rounded-full cursor-pointer border border-gray-300"
-          />
-          <div
-            *ngIf="userMenuOpen"
-            class="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md z-50 text-sm"
-          >
-            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
-            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
-            <hr class="my-1" />
-            <a href="#" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
-          </div>
+  <!-- Header -->
+  <header class="bg-white shadow px-4 py-3 flex items-center justify-between md:px-6">
+    <!-- Left: Logo and App name -->
+    <div class="flex items-center gap-2">
+      <i-lucide [img]="GripVertical" class="w-5 h-5 text-blue-600"></i-lucide>
+      <h1 class="text-xl font-bold text-gray-800">Rules Engine</h1>
+    </div>
+
+    <!-- Right: Mobile menu toggle and user avatar -->
+    <div class="flex items-center gap-4">
+      <!-- Burger Menu -->
+      <button class="md:hidden text-gray-600" (click)="menuOpen = !menuOpen">
+        <i-lucide [img]="Menu" class="w-6 h-6"></i-lucide>
+      </button>
+
+      <!-- User avatar dropdown -->
+      <div class="relative" (click)="userMenuOpen = !userMenuOpen">
+        <img src="https://i.pravatar.cc/40?u=user" alt="User Avatar"
+          class="w-8 h-8 rounded-full cursor-pointer border border-gray-300" />
+        <div *ngIf="userMenuOpen" class="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md z-50 text-sm">
+          <a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+          <a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
+          <hr class="my-1" />
+          <a href="#" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
         </div>
       </div>
-    </header>
-  
-    <!-- Mobile overlay -->
-    <div
-      class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-      *ngIf="menuOpen"
-      (click)="menuOpen = false"
-    ></div>
-  
-    <div class="flex flex-1">
-      <!-- Sidebar -->
-      <aside
-        class="bg-gray-900 text-white w-64 p-4 transform transition-transform duration-300 ease-in-out md:translate-x-0"
-        [ngClass]="{
+    </div>
+  </header>
+
+  <!-- Mobile overlay -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" *ngIf="menuOpen" (click)="menuOpen = false"></div>
+
+  <div class="flex flex-1">
+    <!-- Sidebar -->
+    <aside
+      class="bg-gray-900 text-white w-64 p-4 transform transition-transform duration-300 ease-in-out md:translate-x-0"
+      [ngClass]="{
           'absolute z-50 top-0 left-0 h-full translate-x-0': menuOpen,
           '-translate-x-full absolute z-50 top-0 left-0 h-full': !menuOpen,
           'md:relative md:translate-x-0 md:h-auto': true
-        }"
-      >
-        <nav class="space-y-2 mt-16 md:mt-0">
-          <a
-            routerLink="/workflows"
-            class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded"
-          >
-            <i-lucide [img]="List" class="w-5 h-5"></i-lucide>
-            <span>Workflows</span>
-          </a>
-          <a
-            routerLink="/rules"
-            class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded"
-          >
-            <i-lucide [img]="LayoutDashboard" class="w-5 h-5"></i-lucide>
-            <span>Rules</span>
-          </a>
-        </nav>
-      </aside>
-  
-      <!-- Main Content -->
-      <main class="flex-1 p-4 md:p-6 bg-gray-100 overflow-auto">
-        <app-workflow-node [workflow]="workflow" />
-      </main>
-    </div>
+        }">
+      <nav class="space-y-2 mt-16 md:mt-0">
+        <a routerLink="/workflows" class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded">
+          <i-lucide [img]="List" class="w-5 h-5"></i-lucide>
+          <span>Workflows</span>
+        </a>
+        <a routerLink="/rules" class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded">
+          <i-lucide [img]="LayoutDashboard" class="w-5 h-5"></i-lucide>
+          <span>Rules</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 md:p-6 bg-gray-100 overflow-auto">
+      <app-workflow-node [workflow]="workflow" />
+    </main>
   </div>
-  
+</div>

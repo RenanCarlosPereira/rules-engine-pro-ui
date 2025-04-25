@@ -1,6 +1,5 @@
-import { ScopedParam } from "./scoped-param.model";
-import { RuleActions } from "./rule-actions.model";
-
+import { ScopedParam } from './scoped-param.model';
+import { RuleActions } from './rule-actions.model';
 
 export interface Rule {
   WorkflowsToInject?: string;

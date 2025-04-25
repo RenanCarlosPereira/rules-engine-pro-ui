@@ -1,6 +1,5 @@
-import { ScopedParam } from "./scoped-param.model";
-import { Rule } from "./rule.model";
-
+import { ScopedParam } from './scoped-param.model';
+import { Rule } from './rule.model';
 
 export interface Workflow {
   WorkflowName: string;

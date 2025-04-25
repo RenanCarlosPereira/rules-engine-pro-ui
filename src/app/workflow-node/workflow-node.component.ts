@@ -1,12 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RuleNodeComponent } from '../rule-node/rule-node.component';
-import { LucideAngularModule, LayoutGridIcon, Trash2, Plus, Code, RotateCcw, FilePlus, FilePlusIcon, CodeIcon, WorkflowIcon, GripVertical, SettingsIcon } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  LayoutGridIcon,
+  Trash2,
+  Plus,
+  Code,
+  RotateCcw,
+  FilePlus,
+  FilePlusIcon,
+  CodeIcon,
+  WorkflowIcon,
+  GripVertical,
+  SettingsIcon,
+} from 'lucide-angular';
 import { ExpressionBuilderComponent } from '../expression-builder/expression-builder.component';
 import { Workflow } from '../models/workflow.model';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ContextSchemaEditorComponent } from "../context-schema-editor/context-schema-editor.component";
+import { ContextSchemaEditorComponent } from '../context-schema-editor/context-schema-editor.component';
 
 @Component({
   selector: 'app-workflow-node',
@@ -18,7 +31,7 @@ import { ContextSchemaEditorComponent } from "../context-schema-editor/context-s
     ExpressionBuilderComponent,
     HttpClientModule,
     DragDropModule,
-    ContextSchemaEditorComponent
+    ContextSchemaEditorComponent,
   ],
   templateUrl: './workflow-node.component.html',
 })
@@ -41,7 +54,7 @@ export class WorkflowNodeComponent implements OnInit {
   readonly LayoutGridIcon = LayoutGridIcon;
   readonly SettingsIcon = SettingsIcon;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.workflow.GlobalParams ??= [];
@@ -57,25 +70,28 @@ export class WorkflowNodeComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load sample workflow:', err);
-      }
+      },
     });
   }
 
   validateWorkflow(workflow: Workflow): string[] {
     const errors: string[] = [];
-  
+
     // Rule 1: WorkflowName must not be empty
     if (!workflow.WorkflowName?.trim()) {
-      errors.push("Workflow name must not be empty.");
+      errors.push('Workflow name must not be empty.');
     }
-  
+
     const hasRules = workflow.Rules?.length > 0;
-  
+
     // Rule 2: If no rules, then WorkflowsToInject must not be empty
-    if (!hasRules && (!workflow.WorkflowsToInject || workflow.WorkflowsToInject.length === 0)) {
-      errors.push("Workflow must have either rules or injected workflows.");
+    if (
+      !hasRules &&
+      (!workflow.WorkflowsToInject || workflow.WorkflowsToInject.length === 0)
+    ) {
+      errors.push('Workflow must have either rules or injected workflows.');
     }
-  
+
     // Rule 3: If rules exist, validate each rule
     if (hasRules) {
       for (const rule of workflow.Rules!) {
@@ -83,12 +99,12 @@ export class WorkflowNodeComponent implements OnInit {
         ruleNode.rule = rule;
         const ruleErrors = ruleNode.validateRule(rule);
         if (ruleErrors.length) {
-          errors.push(...ruleErrors.map(e => `[${rule.RuleName}] → ${e}`));
+          errors.push(...ruleErrors.map((e) => `[${rule.RuleName}] → ${e}`));
           break; // early return on first error
         }
       }
     }
-  
+
     return errors;
   }
 
@@ -148,7 +164,7 @@ export class WorkflowNodeComponent implements OnInit {
       RuleName: 'New Rule',
       Enabled: true,
       Operator: null,
-      Expression: "true",
+      Expression: 'true',
       Rules: [],
     });
     this.syncJsonText();
@@ -160,18 +176,23 @@ export class WorkflowNodeComponent implements OnInit {
       GlobalParams: [],
       Rules: [
         {
-          RuleName: "Your first rule",
+          RuleName: 'Your first rule',
           Enabled: true,
-          Expression: "true",
+          Expression: 'true',
           Rules: [],
-          RuleExpressionType: "LambdaExpression"
-        }]
-    }
+          RuleExpressionType: 'LambdaExpression',
+        },
+      ],
+    };
     this.syncJsonText();
   }
 
   reorderRules(event: any) {
-    moveItemInArray(this.workflow.Rules, event.previousIndex, event.currentIndex);
+    moveItemInArray(
+      this.workflow.Rules,
+      event.previousIndex,
+      event.currentIndex
+    );
     this.syncJsonText();
   }
 }

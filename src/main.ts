@@ -9,7 +9,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     ...(appConfig.providers || []),
     provideAnimations(),
-    provideHttpClient()
-  ]
+    provideHttpClient(),
+  ],
 }).catch((err) => console.error(err));
-

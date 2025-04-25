@@ -4,12 +4,9 @@
 }">
   <!-- Header -->
   <div class="flex justify-between items-center mb-2">
-    <input
-      class="text-lg font-semibold w-full border-b border-indigo-300 bg-transparent focus:outline-none"
-      [value]="rule.RuleName"
-      (input)="rule.RuleName = $any($event.target).value; emitChange()"
-      placeholder="Rule name"
-    />
+    <input class="text-lg font-semibold w-full border-b border-indigo-300 bg-transparent focus:outline-none"
+      [value]="rule.RuleName" (input)="rule.RuleName = $any($event.target).value; emitChange()"
+      placeholder="Rule name" />
 
 
 
@@ -38,13 +35,13 @@
           class="w-4 h-4 text-red-600 hover:text-red-800 transition-transform hover:scale-110 active:scale-95" />
       </button>
     </div>
-    
+
 
 
   </div>
 
   <ng-container *ngIf="isExpanded">
-   
+
     <!-- Validators -->
     <div *ngIf="validationErrors?.length" class="mb-2 text-red-600 text-sm space-y-1">
       <div *ngFor="let error of validationErrors">{{ error }}</div>
@@ -59,7 +56,8 @@
           No operator
         </button>
         <button *ngFor="let op of operatorOptions" (click)="setOperator(op)" [class.bg-blue-600]="rule.Operator === op"
-          [class.text-white]="rule.Operator === op" class="px-3 py-1 text-sm rounded border hover:bg-blue-100 transition">
+          [class.text-white]="rule.Operator === op"
+          class="px-3 py-1 text-sm rounded border hover:bg-blue-100 transition">
           {{ op }}
         </button>
       </div>
@@ -115,8 +113,7 @@
     <div class="mt-2">
       <label class="text-xs text-gray-500">Error Message:</label>
       <input class="border p-1 text-xs rounded w-full mt-1" placeholder="Custom error message"
-        [value]="rule.ErrorMessage ?? ''"
-        (input)="rule.ErrorMessage = $any($event.target).value; emitChange()" />
+        [value]="rule.ErrorMessage ?? ''" (input)="rule.ErrorMessage = $any($event.target).value; emitChange()" />
     </div>
 
     <!-- Subrules -->
@@ -140,12 +137,10 @@
 </div>
 
 <!-- Actions Modal -->
- 
+
 <div *ngIf="showActionsModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
   <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 relative">
-    <app-rule-actions-editor
-  [rule]="rule"
-  [onClose]="closeActionsModal.bind(this)">
-</app-rule-actions-editor>
+    <app-rule-actions-editor [rule]="rule" [onClose]="closeActionsModal.bind(this)">
+    </app-rule-actions-editor>
   </div>
 </div>

@@ -6,13 +6,13 @@ import { LucideAngularModule, Trash2, Plus } from 'lucide-angular';
 @Component({
   selector: 'app-rule-actions-editor',
   templateUrl: './rule-actions-editor.component.html',
-  imports:[CommonModule, LucideAngularModule]
+  imports: [CommonModule, LucideAngularModule],
 })
 export class RuleActionsEditorComponent {
   @Input({ required: true }) rule!: Rule;
   @Input() onClose: () => void = () => {};
-  Trash2 = Trash2
-  Plus = Plus
+  Trash2 = Trash2;
+  Plus = Plus;
 
   updateActionName(type: 'OnSuccess' | 'OnFailure', name: string) {
     this.rule.Actions ??= {};
@@ -33,8 +33,13 @@ export class RuleActionsEditorComponent {
     return Object.keys(this.rule.Actions?.[type]?.Context || {});
   }
 
-  updateContextValue(type: 'OnSuccess' | 'OnFailure', key: string, value: string) {
-    this.rule.Actions?.[type]?.Context && (this.rule.Actions[type]!.Context[key] = value);
+  updateContextValue(
+    type: 'OnSuccess' | 'OnFailure',
+    key: string,
+    value: string
+  ) {
+    this.rule.Actions?.[type]?.Context &&
+      (this.rule.Actions[type]!.Context[key] = value);
   }
 
   addContextEntry(type: 'OnSuccess' | 'OnFailure') {
@@ -47,7 +52,11 @@ export class RuleActionsEditorComponent {
     delete this.rule.Actions?.[type]?.Context?.[key];
   }
 
-  onContextKeyBlur(type: 'OnSuccess' | 'OnFailure', index: number, newKey: string) {
+  onContextKeyBlur(
+    type: 'OnSuccess' | 'OnFailure',
+    index: number,
+    newKey: string
+  ) {
     const context = this.rule.Actions?.[type]?.Context;
     if (!context) return;
 

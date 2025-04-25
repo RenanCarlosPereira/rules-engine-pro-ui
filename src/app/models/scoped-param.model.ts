@@ -1,7 +1,4 @@
-
 export interface ScopedParam {
-    Name: string;
-    Expression: string;
-  }
-  
-
+  Name: string;
+  Expression: string;
+}

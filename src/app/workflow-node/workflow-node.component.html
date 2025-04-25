@@ -37,43 +37,44 @@
       placeholder="Workflow name" />
   </div>
   <div class="mb-4">
-  <div *ngIf="validationMessages.length" class="bg-red-100 border border-red-300 rounded p-3 text-red-700 text-sm mt-2">
-    <ul class="list-disc pl-5">
-      <li *ngFor="let error of validationMessages">{{ error }}</li>
-    </ul>
-  </div>
-</div>
-
-<!-- Compact Global Parameters Card -->
-<div class="bg-white rounded-lg shadow-sm p-3 mb-4 border border-gray-200">
-  <div class="flex items-center justify-between mb-2">
-    <h3 class="font-medium text-gray-700 text-sm flex items-center gap-1">
-      <i-lucide [img]="SettingsIcon" class="w-4 h-4 text-blue-500" />
-      Global Parameters
-    </h3>
-  </div>
-
-  <div *ngIf="workflow.GlobalParams?.length; else noParams">
-    <div *ngFor="let param of workflow.GlobalParams; let i = index" class="mb-1 flex items-center gap-1">
-      <input class="border border-gray-300 px-2 py-1 text-xs rounded w-1/6" placeholder="Name" [value]="param.Name"
-        (input)="updateGlobalParamName(i, $any($event.target).value)" />
-      <input class="border border-gray-300 px-2 py-1 text-xs rounded flex-1" placeholder="Expression"
-        [value]="param.Expression" (input)="updateGlobalParamExpression(i, $any($event.target).value)" />
-      <button (click)="deleteGlobalParam(i)" class="text-red-500 hover:text-red-600">
-        <i-lucide [img]="Trash2" class="w-3.5 h-3.5" />
-      </button>
+    <div *ngIf="validationMessages.length"
+      class="bg-red-100 border border-red-300 rounded p-3 text-red-700 text-sm mt-2">
+      <ul class="list-disc pl-5">
+        <li *ngFor="let error of validationMessages">{{ error }}</li>
+      </ul>
     </div>
   </div>
 
-  <ng-template #noParams>
-    <p class="text-xs text-gray-400 italic mb-1">No global parameters</p>
-  </ng-template>
+  <!-- Compact Global Parameters Card -->
+  <div class="bg-white rounded-lg shadow-sm p-3 mb-4 border border-gray-200">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="font-medium text-gray-700 text-sm flex items-center gap-1">
+        <i-lucide [img]="SettingsIcon" class="w-4 h-4 text-blue-500" />
+        Global Parameters
+      </h3>
+    </div>
 
-  <button (click)="addGlobalParam()"
-    class="mt-1 text-xs text-blue-600 hover:underline hover:scale-105 transition-transform flex items-center gap-1">
-    <i-lucide [img]="Plus" class="w-3.5 h-3.5" /> Add parameter
-  </button>
-</div>
+    <div *ngIf="workflow.GlobalParams?.length; else noParams">
+      <div *ngFor="let param of workflow.GlobalParams; let i = index" class="mb-1 flex items-center gap-1">
+        <input class="border border-gray-300 px-2 py-1 text-xs rounded w-1/6" placeholder="Name" [value]="param.Name"
+          (input)="updateGlobalParamName(i, $any($event.target).value)" />
+        <input class="border border-gray-300 px-2 py-1 text-xs rounded flex-1" placeholder="Expression"
+          [value]="param.Expression" (input)="updateGlobalParamExpression(i, $any($event.target).value)" />
+        <button (click)="deleteGlobalParam(i)" class="text-red-500 hover:text-red-600">
+          <i-lucide [img]="Trash2" class="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+
+    <ng-template #noParams>
+      <p class="text-xs text-gray-400 italic mb-1">No global parameters</p>
+    </ng-template>
+
+    <button (click)="addGlobalParam()"
+      class="mt-1 text-xs text-blue-600 hover:underline hover:scale-105 transition-transform flex items-center gap-1">
+      <i-lucide [img]="Plus" class="w-3.5 h-3.5" /> Add parameter
+    </button>
+  </div>
 
 
   <!-- Rules -->

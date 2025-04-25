@@ -1,4 +1,13 @@
-import { Component, Input, Output, EventEmitter, PLATFORM_ID, Inject, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  PLATFORM_ID,
+  Inject,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CodeEditor } from '@acrodata/code-editor';
@@ -39,7 +48,7 @@ export class ExpressionBuilderComponent implements OnChanges {
 
   private setLanguage(name: string) {
     const lang = allLanguages.find(
-      l => l.name.toLowerCase() === name.toLowerCase()
+      (l) => l.name.toLowerCase() === name.toLowerCase()
     );
     if (lang) {
       this.languageDesc = lang;

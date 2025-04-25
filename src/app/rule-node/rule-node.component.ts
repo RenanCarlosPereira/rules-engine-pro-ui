@@ -1,16 +1,30 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Rule } from "../models/rule.model";
-import { LucideAngularModule, Trash2, ChevronDown, ChevronUp, Plus, GripVertical, CheckCircleIcon } from 'lucide-angular';
+import { Rule } from '../models/rule.model';
+import {
+  LucideAngularModule,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  GripVertical,
+  CheckCircleIcon,
+} from 'lucide-angular';
 import { DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ExpressionBuilderComponent } from "../expression-builder/expression-builder.component";
-import { RuleActionsEditorComponent } from "../rule-actions-editor/rule-actions-editor.component";
+import { ExpressionBuilderComponent } from '../expression-builder/expression-builder.component';
+import { RuleActionsEditorComponent } from '../rule-actions-editor/rule-actions-editor.component';
 
 @Component({
   selector: 'app-rule-node',
   standalone: true,
-  imports: [CommonModule, DragDropModule, LucideAngularModule, ExpressionBuilderComponent, RuleActionsEditorComponent],
-  templateUrl: './rule-node.component.html'
+  imports: [
+    CommonModule,
+    DragDropModule,
+    LucideAngularModule,
+    ExpressionBuilderComponent,
+    RuleActionsEditorComponent,
+  ],
+  templateUrl: './rule-node.component.html',
 })
 export class RuleNodeComponent implements OnInit {
   @Input({ required: true }) rule!: Rule;
@@ -65,31 +79,31 @@ export class RuleNodeComponent implements OnInit {
 
   validateRule(rule: Rule): string[] {
     const errors: string[] = [];
-  
+
     // Regra 1: RuleName não pode estar vazio
     if (!rule.RuleName?.trim()) {
-      errors.push("Rule name must not be empty.");
+      errors.push('Rule name must not be empty.');
     }
-  
+
     const nestedOperators = ['And', 'Or'];
-  
+
     if (rule.Operator != null) {
       // Regra 2: Operator deve ser um dos operadores válidos
       if (!nestedOperators.includes(rule.Operator)) {
-        errors.push("Invalid operator. Must be one of: And, Or.");
+        errors.push('Invalid operator. Must be one of: And, Or.');
       }
-  
+
       // Regra 3: Se não tiver regras internas, deve ter WorkflowsToInject
       if (!rule.Rules?.length) {
         if (!rule.WorkflowsToInject?.length) {
-          errors.push("Cannot use an operator without rules.");
+          errors.push('Cannot use an operator without rules.');
         }
       } else {
         // Validação recursiva das sub-regras
         for (const subRule of rule.Rules) {
           const subErrors = this.validateRule(subRule);
           if (subErrors.length) {
-            errors.push(...subErrors.map(e => `[${rule.RuleName}] → ${e}`));
+            errors.push(...subErrors.map((e) => `[${rule.RuleName}] → ${e}`));
             break; // para após encontrar o primeiro erro em sub-regras
           }
         }
@@ -98,15 +112,17 @@ export class RuleNodeComponent implements OnInit {
       // Regra 4: Se não tiver operador, deve ter expressão (caso tipo seja LambdaExpression)
       if (rule.RuleExpressionType === 'LambdaExpression') {
         if (!rule.Expression?.trim()) {
-          errors.push("Expression must not be empty for LambdaExpression rules.");
+          errors.push(
+            'Expression must not be empty for LambdaExpression rules.'
+          );
         }
-  
+
         if (rule.Rules?.length) {
-          errors.push("Operator is null, so nested rules must be empty.");
+          errors.push('Operator is null, so nested rules must be empty.');
         }
       }
     }
-  
+
     return errors;
   }
 
@@ -141,7 +157,11 @@ export class RuleNodeComponent implements OnInit {
 
   addChildRule() {
     this.rule.Rules ??= [];
-    this.rule.Rules.push({ RuleName: 'New Rule', Expression: '', Enabled: true });
+    this.rule.Rules.push({
+      RuleName: 'New Rule',
+      Expression: '',
+      Enabled: true,
+    });
     this.emitChange();
   }
 
@@ -197,7 +217,11 @@ export class RuleNodeComponent implements OnInit {
     this.emitChange();
   }
 
-  updateContextKey(type: 'OnSuccess' | 'OnFailure', index: number, newKey: string) {
+  updateContextKey(
+    type: 'OnSuccess' | 'OnFailure',
+    index: number,
+    newKey: string
+  ) {
     const context = this.rule.Actions![type]!.Context!;
     const oldKey = Object.keys(context)[index];
     const value = context[oldKey];
@@ -206,7 +230,11 @@ export class RuleNodeComponent implements OnInit {
     this.emitChange();
   }
 
-  updateContextValue(type: 'OnSuccess' | 'OnFailure', key: string, value: string) {
+  updateContextValue(
+    type: 'OnSuccess' | 'OnFailure',
+    key: string,
+    value: string
+  ) {
     this.rule.Actions![type]!.Context![key] = value;
     this.emitChange();
   }
@@ -216,7 +244,11 @@ export class RuleNodeComponent implements OnInit {
     this.emitChange();
   }
 
-  onContextKeyBlur(type: 'OnSuccess' | 'OnFailure', index: number, newKey: string) {
+  onContextKeyBlur(
+    type: 'OnSuccess' | 'OnFailure',
+    index: number,
+    newKey: string
+  ) {
     const context = this.rule.Actions![type]!.Context!;
     const oldKey = Object.keys(context)[index];
     if (oldKey !== newKey && newKey.trim()) {
