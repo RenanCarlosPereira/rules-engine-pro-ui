@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { Rule } from '../models/rule.model';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { Rule } from '../models/rule';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Trash2, Plus } from 'lucide-angular';
 
@@ -10,54 +10,56 @@ import { LucideAngularModule, Trash2, Plus } from 'lucide-angular';
 })
 export class RuleActionsEditorComponent {
   @Input({ required: true }) rule!: Rule;
-  @Input() onClose: () => void = () => {};
+  @Input() onClose: () => void = () => { this.cdr.detectChanges();};
   Trash2 = Trash2;
   Plus = Plus;
 
-  updateActionName(type: 'OnSuccess' | 'OnFailure', name: string) {
-    this.rule.Actions ??= {};
-    this.rule.Actions[type] ??= { Name: '', Context: {} };
-    this.rule.Actions[type]!.Name = name;
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  updateActionName(type: 'onSuccess' | 'onFailure', name: string) {
+    this.rule.actions ??= {};
+    this.rule.actions[type] ??= { name: '', Context: {} };
+    this.rule.actions[type]!.name = name;
   }
 
-  addAction(type: 'OnSuccess' | 'OnFailure') {
-    this.rule.Actions ??= {};
-    this.rule.Actions[type] = { Name: '', Context: {} };
+  addAction(type: 'onSuccess' | 'onFailure') {
+    this.rule.actions ??= {};
+    this.rule.actions[type] = { name: '', Context: {} };
   }
 
-  removeAction(type: 'OnSuccess' | 'OnFailure') {
-    delete this.rule.Actions?.[type];
+  removeAction(type: 'onSuccess' | 'onFailure') {
+    delete this.rule.actions?.[type];
   }
 
-  getContextKeys(type: 'OnSuccess' | 'OnFailure'): string[] {
-    return Object.keys(this.rule.Actions?.[type]?.Context || {});
+  getContextKeys(type: 'onSuccess' | 'onFailure'): string[] {
+    return Object.keys(this.rule.actions?.[type]?.Context || {});
   }
 
   updateContextValue(
-    type: 'OnSuccess' | 'OnFailure',
+    type: 'onSuccess' | 'onFailure',
     key: string,
     value: string
   ) {
-    this.rule.Actions?.[type]?.Context &&
-      (this.rule.Actions[type]!.Context[key] = value);
+    this.rule.actions?.[type]?.Context &&
+      (this.rule.actions[type]!.Context[key] = value);
   }
 
-  addContextEntry(type: 'OnSuccess' | 'OnFailure') {
-    this.rule.Actions ??= {};
-    this.rule.Actions[type] ??= { Name: '', Context: {} };
-    this.rule.Actions![type]!.Context![''] = '';
+  addContextEntry(type: 'onSuccess' | 'onFailure') {
+    this.rule.actions ??= {};
+    this.rule.actions[type] ??= { name: '', Context: {} };
+    this.rule.actions![type]!.Context![''] = '';
   }
 
-  deleteContextEntry(type: 'OnSuccess' | 'OnFailure', key: string) {
-    delete this.rule.Actions?.[type]?.Context?.[key];
+  deleteContextEntry(type: 'onSuccess' | 'onFailure', key: string) {
+    delete this.rule.actions?.[type]?.Context?.[key];
   }
 
   onContextKeyBlur(
-    type: 'OnSuccess' | 'OnFailure',
+    type: 'onSuccess' | 'onFailure',
     index: number,
     newKey: string
   ) {
-    const context = this.rule.Actions?.[type]?.Context;
+    const context = this.rule.actions?.[type]?.Context;
     if (!context) return;
 
     const keys = Object.keys(context);

@@ -33,7 +33,7 @@
   <div class="mb-4">
     <input
       class="text-2xl font-bold text-indigo-800 bg-transparent w-full border-b border-indigo-200 focus:outline-none"
-      [value]="workflow.WorkflowName" (input)="updateWorkflowName($any($event.target).value)"
+      [value]="workflow.workflowName" (input)="updateWorkflowName($any($event.target).value)"
       placeholder="Workflow name" />
   </div>
   <div class="mb-4">
@@ -54,12 +54,12 @@
       </h3>
     </div>
 
-    <div *ngIf="workflow.GlobalParams?.length; else noParams">
-      <div *ngFor="let param of workflow.GlobalParams; let i = index" class="mb-1 flex items-center gap-1">
-        <input class="border border-gray-300 px-2 py-1 text-xs rounded w-1/6" placeholder="Name" [value]="param.Name"
+    <div *ngIf="workflow.globalParams?.length; else noParams">
+      <div *ngFor="let param of workflow.globalParams; let i = index" class="mb-1 flex items-center gap-1">
+        <input class="border border-gray-300 px-2 py-1 text-xs rounded w-1/6" placeholder="name" [value]="param.name"
           (input)="updateGlobalParamName(i, $any($event.target).value)" />
-        <input class="border border-gray-300 px-2 py-1 text-xs rounded flex-1" placeholder="Expression"
-          [value]="param.Expression" (input)="updateGlobalParamExpression(i, $any($event.target).value)" />
+        <input class="border border-gray-300 px-2 py-1 text-xs rounded flex-1" placeholder="expression"
+          [value]="param.expression" (input)="updateGlobalParamExpression(i, $any($event.target).value)" />
         <button (click)="deleteGlobalParam(i)" class="text-red-500 hover:text-red-600">
           <i-lucide [img]="Trash2" class="w-3.5 h-3.5" />
         </button>
@@ -77,14 +77,14 @@
   </div>
 
 
-  <!-- Rules -->
-  <h3 class="text-xl font-semibold text-indigo-700 mb-3">Rules</h3>
+  <!-- rules -->
+  <h3 class="text-xl font-semibold text-indigo-700 mb-3">rules</h3>
 
   <div class="mt-4 border-l-2 pl-4 border-indigo-300">
-    <ng-container *ngIf="workflow.Rules.length > 0; else emptyGroup">
+    <ng-container *ngIf="workflow.rules.length > 0; else emptyGroup">
       <div cdkDropList (cdkDropListDropped)="reorderRules($event)">
-        <div *ngFor="let rule of workflow.Rules; let i = index" cdkDrag>
-          <app-rule-node [rule]="rule" [parentRules]="workflow.Rules" [indexInParent]="i"
+        <div *ngFor="let rule of workflow.rules; let i = index" cdkDrag>
+          <app-rule-node [rule]="rule" [parentRules]="workflow.rules" [indexInParent]="i"
             (ruleChanged)="syncJsonText()"></app-rule-node>
         </div>
       </div>

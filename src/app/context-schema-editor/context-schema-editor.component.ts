@@ -12,8 +12,8 @@ import {
   Settings2Icon,
 } from 'lucide-angular';
 
-import { Workflow } from '../models/workflow.model';
-import { Rule } from '../models/rule.model';
+import { Workflow } from '../models/workflow';
+import { Rule } from '../models/rule';
 import { ExpressionBuilderComponent } from '../expression-builder/expression-builder.component';
 
 type FieldType = 'string' | 'number' | 'boolean' | 'object';
@@ -71,14 +71,14 @@ export class ContextSchemaEditorComponent implements OnChanges {
 
     const traverse = (rule: Rule, depth: number) => {
       rules.push({ rule, depth });
-      if (Array.isArray(rule.Rules)) {
-        for (const subRule of rule.Rules) {
+      if (Array.isArray(rule.rules)) {
+        for (const subRule of rule.rules) {
           traverse(subRule, depth + 1);
         }
       }
     };
 
-    for (const rule of workflow.Rules || []) {
+    for (const rule of workflow.rules || []) {
       traverse(rule, 0);
     }
 
@@ -159,7 +159,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
     this.http
       .post<Response>(
         `https://rules-engine-pro-api.onrender.com/execute?ruleName=${encodeURIComponent(
-          rule.RuleName
+          rule.ruleName
         )}`,
         payload
       )

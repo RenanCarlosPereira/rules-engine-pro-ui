@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Rule } from '../models/rule.model';
+import { Rule } from '../models/rule';
 import {
   LucideAngularModule,
   Trash2,
@@ -35,7 +35,7 @@ export class RuleNodeComponent implements OnInit {
   showActionsModal = false;
   isExpanded = false;
   confirmingOperatorClear = false;
-  pendingOperator: Rule['Operator'] | null = null;
+  pendingOperator: Rule['operator'] | null = null;
   validationErrors: string[] = [];
 
   readonly Trash2 = Trash2;
@@ -48,14 +48,14 @@ export class RuleNodeComponent implements OnInit {
   readonly operatorOptions = ['And', 'Or'] as const;
 
   get isGroupRule(): boolean {
-    return this.rule.Operator !== null && Array.isArray(this.rule.Rules);
+    return this.rule.operator !== null && Array.isArray(this.rule.rules);
   }
 
   ngOnInit() {
-    this.rule.LocalParams ??= [];
-    this.rule.Actions ??= {};
-    this.rule.Properties ??= {};
-    this.rule.RuleExpressionType ??= 'LambdaExpression';
+    this.rule.localParams ??= [];
+    this.rule.actions ??= {};
+    this.rule.properties ??= {};
+    this.rule.ruleExpressionType ??= 'LambdaExpression';
   }
 
   emitChange() {
@@ -69,7 +69,7 @@ export class RuleNodeComponent implements OnInit {
   }
 
   toggleEnabled() {
-    this.rule.Enabled = !this.rule.Enabled;
+    this.rule.enabled = !this.rule.enabled;
     this.emitChange();
   }
 
@@ -81,43 +81,43 @@ export class RuleNodeComponent implements OnInit {
     const errors: string[] = [];
 
     // Regra 1: RuleName não pode estar vazio
-    if (!rule.RuleName?.trim()) {
+    if (!rule.ruleName?.trim()) {
       errors.push('Rule name must not be empty.');
     }
 
     const nestedOperators = ['And', 'Or'];
 
-    if (rule.Operator != null) {
+    if (rule.operator != null) {
       // Regra 2: Operator deve ser um dos operadores válidos
-      if (!nestedOperators.includes(rule.Operator)) {
+      if (!nestedOperators.includes(rule.operator)) {
         errors.push('Invalid operator. Must be one of: And, Or.');
       }
 
-      // Regra 3: Se não tiver regras internas, deve ter WorkflowsToInject
-      if (!rule.Rules?.length) {
-        if (!rule.WorkflowsToInject?.length) {
+      // Regra 3: Se não tiver regras internas, deve ter workflowsToInject
+      if (!rule.rules?.length) {
+        if (!rule.workflowsToInject?.length) {
           errors.push('Cannot use an operator without rules.');
         }
       } else {
         // Validação recursiva das sub-regras
-        for (const subRule of rule.Rules) {
+        for (const subRule of rule.rules) {
           const subErrors = this.validateRule(subRule);
           if (subErrors.length) {
-            errors.push(...subErrors.map((e) => `[${rule.RuleName}] → ${e}`));
+            errors.push(...subErrors.map((e) => `[${rule.ruleName}] → ${e}`));
             break; // para após encontrar o primeiro erro em sub-regras
           }
         }
       }
     } else {
       // Regra 4: Se não tiver operador, deve ter expressão (caso tipo seja LambdaExpression)
-      if (rule.RuleExpressionType === 'LambdaExpression') {
-        if (!rule.Expression?.trim()) {
+      if (rule.ruleExpressionType === 'LambdaExpression') {
+        if (!rule.expression?.trim()) {
           errors.push(
-            'Expression must not be empty for LambdaExpression rules.'
+            'expression must not be empty for LambdaExpression rules.'
           );
         }
 
-        if (rule.Rules?.length) {
+        if (rule.rules?.length) {
           errors.push('Operator is null, so nested rules must be empty.');
         }
       }
@@ -126,27 +126,27 @@ export class RuleNodeComponent implements OnInit {
     return errors;
   }
 
-  setOperator(op: Rule['Operator'] | null) {
-    if (op === null && this.rule.Rules?.length) {
+  setOperator(op: Rule['operator'] | null) {
+    if (op === null && this.rule.rules?.length) {
       this.pendingOperator = op;
       this.confirmingOperatorClear = true;
       return;
     }
-    this.rule.Operator = op;
+    this.rule.operator = op;
     if (op === null) {
-      this.rule.Expression = '';
-      delete this.rule.Rules;
+      this.rule.expression = '';
+      delete this.rule.rules;
     } else {
-      delete this.rule.Expression;
-      this.rule.Rules ??= [];
+      delete this.rule.expression;
+      this.rule.rules ??= [];
     }
     this.emitChange();
   }
 
   confirmOperatorChange() {
     this.confirmingOperatorClear = false;
-    this.rule.Operator = this.pendingOperator;
-    delete this.rule.Rules;
+    this.rule.operator = this.pendingOperator;
+    delete this.rule.rules;
     this.emitChange();
   }
 
@@ -156,11 +156,11 @@ export class RuleNodeComponent implements OnInit {
   }
 
   addChildRule() {
-    this.rule.Rules ??= [];
-    this.rule.Rules.push({
-      RuleName: 'New Rule',
-      Expression: '',
-      Enabled: true,
+    this.rule.rules ??= [];
+    this.rule.rules.push({
+      ruleName: 'New Rule',
+      expression: '',
+      enabled: true,
     });
     this.emitChange();
   }
@@ -173,56 +173,56 @@ export class RuleNodeComponent implements OnInit {
   }
 
   addLocalParam() {
-    this.rule.LocalParams ??= [];
-    this.rule.LocalParams.push({ Name: '', Expression: '' });
+    this.rule.localParams ??= [];
+    this.rule.localParams.push({ name: '', expression: '' });
     this.emitChange();
   }
 
   deleteLocalParam(index: number) {
-    this.rule.LocalParams?.splice(index, 1);
+    this.rule.localParams?.splice(index, 1);
     this.emitChange();
   }
 
   updateLocalParamName(index: number, value: string) {
-    this.rule.LocalParams![index].Name = value;
+    this.rule.localParams![index].name = value;
     this.emitChange();
   }
 
   updateLocalParamExpression(index: number, value: string) {
-    this.rule.LocalParams![index].Expression = value;
+    this.rule.localParams![index].expression = value;
     this.emitChange();
   }
 
-  addAction(type: 'OnSuccess' | 'OnFailure') {
-    this.rule.Actions![type] = { Name: '', Context: {} };
+  addAction(type: 'onSuccess' | 'onFailure') {
+    this.rule.actions![type] = { name: '', Context: {} };
     this.emitChange();
   }
 
-  removeAction(type: 'OnSuccess' | 'OnFailure') {
-    delete this.rule.Actions![type];
+  removeAction(type: 'onSuccess' | 'onFailure') {
+    delete this.rule.actions![type];
     this.emitChange();
   }
 
-  updateActionName(type: 'OnSuccess' | 'OnFailure', name: string) {
-    this.rule.Actions![type]!.Name = name;
+  updateActionName(type: 'onSuccess' | 'onFailure', name: string) {
+    this.rule.actions![type]!.name = name;
     this.emitChange();
   }
 
-  getContextKeys(type: 'OnSuccess' | 'OnFailure'): string[] {
-    return Object.keys(this.rule.Actions?.[type]?.Context ?? {});
+  getContextKeys(type: 'onSuccess' | 'onFailure'): string[] {
+    return Object.keys(this.rule.actions?.[type]?.Context ?? {});
   }
 
-  addContextEntry(type: 'OnSuccess' | 'OnFailure') {
-    this.rule.Actions![type]!.Context![''] = '';
+  addContextEntry(type: 'onSuccess' | 'onFailure') {
+    this.rule.actions![type]!.Context![''] = '';
     this.emitChange();
   }
 
   updateContextKey(
-    type: 'OnSuccess' | 'OnFailure',
+    type: 'onSuccess' | 'onFailure',
     index: number,
     newKey: string
   ) {
-    const context = this.rule.Actions![type]!.Context!;
+    const context = this.rule.actions![type]!.Context!;
     const oldKey = Object.keys(context)[index];
     const value = context[oldKey];
     delete context[oldKey];
@@ -231,25 +231,25 @@ export class RuleNodeComponent implements OnInit {
   }
 
   updateContextValue(
-    type: 'OnSuccess' | 'OnFailure',
+    type: 'onSuccess' | 'onFailure',
     key: string,
     value: string
   ) {
-    this.rule.Actions![type]!.Context![key] = value;
+    this.rule.actions![type]!.Context![key] = value;
     this.emitChange();
   }
 
-  deleteContextEntry(type: 'OnSuccess' | 'OnFailure', key: string) {
-    delete this.rule.Actions![type]!.Context![key];
+  deleteContextEntry(type: 'onSuccess' | 'onFailure', key: string) {
+    delete this.rule.actions![type]!.Context![key];
     this.emitChange();
   }
 
   onContextKeyBlur(
-    type: 'OnSuccess' | 'OnFailure',
+    type: 'onSuccess' | 'onFailure',
     index: number,
     newKey: string
   ) {
-    const context = this.rule.Actions![type]!.Context!;
+    const context = this.rule.actions![type]!.Context!;
     const oldKey = Object.keys(context)[index];
     if (oldKey !== newKey && newKey.trim()) {
       const value = context[oldKey];
@@ -260,7 +260,7 @@ export class RuleNodeComponent implements OnInit {
   }
 
   dropRule(event: any) {
-    moveItemInArray(this.rule.Rules!, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.rule.rules!, event.previousIndex, event.currentIndex);
     this.emitChange();
   }
 }

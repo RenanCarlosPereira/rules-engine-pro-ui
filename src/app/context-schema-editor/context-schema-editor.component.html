@@ -11,7 +11,7 @@
       <select class="border rounded-md px-2 py-1 text-sm" [(ngModel)]="selectedRule">
         <option [ngValue]="null">-- Select rule --</option>
         <option *ngFor="let entry of availableRules" [ngValue]="entry.rule">
-          {{ '—'.repeat(entry.depth) }} {{ entry.rule.RuleName }}
+          {{ '—'.repeat(entry.depth) }} {{ entry.rule.ruleName }}
         </option>
       </select>
     </div>

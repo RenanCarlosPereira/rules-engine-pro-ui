@@ -16,7 +16,7 @@ import {
   SettingsIcon,
 } from 'lucide-angular';
 import { ExpressionBuilderComponent } from '../expression-builder/expression-builder.component';
-import { Workflow } from '../models/workflow.model';
+import { Workflow } from '../models/workflow';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextSchemaEditorComponent } from '../context-schema-editor/context-schema-editor.component';
@@ -57,15 +57,16 @@ export class WorkflowNodeComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.workflow.GlobalParams ??= [];
+    this.workflow.globalParams ??= [];
     this.syncJsonText();
   }
 
   loadSampleWorkflow() {
     this.http.get<Workflow>('assets/sample-workflow.json').subscribe({
       next: (data) => {
+        console.log(data);
         this.workflow = data;
-        this.workflow.GlobalParams ??= [];
+        this.workflow.globalParams ??= [];
         this.syncJsonText();
       },
       error: (err) => {
@@ -77,29 +78,29 @@ export class WorkflowNodeComponent implements OnInit {
   validateWorkflow(workflow: Workflow): string[] {
     const errors: string[] = [];
 
-    // Rule 1: WorkflowName must not be empty
-    if (!workflow.WorkflowName?.trim()) {
+    // Rule 1: workflowName must not be empty
+    if (!workflow.workflowName?.trim()) {
       errors.push('Workflow name must not be empty.');
     }
 
-    const hasRules = workflow.Rules?.length > 0;
+    const hasRules = workflow.rules?.length > 0;
 
-    // Rule 2: If no rules, then WorkflowsToInject must not be empty
+    // Rule 2: If no rules, then workflowsToInject must not be empty
     if (
       !hasRules &&
-      (!workflow.WorkflowsToInject || workflow.WorkflowsToInject.length === 0)
+      (!workflow.workflowsToInject || workflow.workflowsToInject.length === 0)
     ) {
       errors.push('Workflow must have either rules or injected workflows.');
     }
 
     // Rule 3: If rules exist, validate each rule
     if (hasRules) {
-      for (const rule of workflow.Rules!) {
+      for (const rule of workflow.rules!) {
         const ruleNode = new RuleNodeComponent(); // Dummy to use validateRule
         ruleNode.rule = rule;
         const ruleErrors = ruleNode.validateRule(rule);
         if (ruleErrors.length) {
-          errors.push(...ruleErrors.map((e) => `[${rule.RuleName}] → ${e}`));
+          errors.push(...ruleErrors.map((e) => `[${rule.ruleName}] → ${e}`));
           break; // early return on first error
         }
       }
@@ -109,7 +110,7 @@ export class WorkflowNodeComponent implements OnInit {
   }
 
   updateWorkflowName(name: string) {
-    this.workflow.WorkflowName = name;
+    this.workflow.workflowName = name;
     this.syncJsonText();
   }
 
@@ -126,7 +127,7 @@ export class WorkflowNodeComponent implements OnInit {
     try {
       const parsed = JSON.parse(newJson);
       this.workflow = parsed;
-      this.workflow.GlobalParams ??= [];
+      this.workflow.globalParams ??= [];
       this.syncJsonText();
     } catch (error) {
       console.error('Invalid JSON:', error);
@@ -134,53 +135,53 @@ export class WorkflowNodeComponent implements OnInit {
   }
 
   addGlobalParam() {
-    this.workflow.GlobalParams ??= [];
-    this.workflow.GlobalParams.push({ Name: '', Expression: '' });
+    this.workflow.globalParams ??= [];
+    this.workflow.globalParams.push({ name: '', expression: '' });
     this.syncJsonText();
   }
 
   deleteGlobalParam(index: number) {
-    this.workflow.GlobalParams?.splice(index, 1);
+    this.workflow.globalParams?.splice(index, 1);
     this.syncJsonText();
   }
 
   updateGlobalParamName(index: number, value: string) {
-    if (this.workflow.GlobalParams) {
-      this.workflow.GlobalParams[index].Name = value;
+    if (this.workflow.globalParams) {
+      this.workflow.globalParams[index].name = value;
       this.syncJsonText();
     }
   }
 
   updateGlobalParamExpression(index: number, value: string) {
-    if (this.workflow.GlobalParams) {
-      this.workflow.GlobalParams[index].Expression = value;
+    if (this.workflow.globalParams) {
+      this.workflow.globalParams[index].expression = value;
       this.syncJsonText();
     }
   }
 
   addRootRule() {
-    this.workflow.Rules ??= [];
-    this.workflow.Rules.push({
-      RuleName: 'New Rule',
-      Enabled: true,
-      Operator: null,
-      Expression: 'true',
-      Rules: [],
+    this.workflow.rules ??= [];
+    this.workflow.rules.push({
+      ruleName: 'New Rule',
+      enabled: true,
+      operator: null,
+      expression: 'true',
+      rules: [],
     });
     this.syncJsonText();
   }
 
   resetWorkflow() {
     this.workflow = {
-      WorkflowName: 'Your first workflow',
-      GlobalParams: [],
-      Rules: [
+      workflowName: 'Your first workflow',
+      globalParams: [],
+      rules: [
         {
-          RuleName: 'Your first rule',
-          Enabled: true,
-          Expression: 'true',
-          Rules: [],
-          RuleExpressionType: 'LambdaExpression',
+          ruleName: 'Your first rule',
+          enabled: true,
+          expression: 'true',
+          rules: [],
+          ruleExpressionType: 'LambdaExpression',
         },
       ],
     };
@@ -189,7 +190,7 @@ export class WorkflowNodeComponent implements OnInit {
 
   reorderRules(event: any) {
     moveItemInArray(
-      this.workflow.Rules,
+      this.workflow.rules,
       event.previousIndex,
       event.currentIndex
     );
