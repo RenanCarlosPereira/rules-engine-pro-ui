@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,12 +10,11 @@ import {
   FileTextIcon,
   LayoutGridIcon,
   Settings2Icon,
+  XIcon
 } from 'lucide-angular';
 
 import { Workflow } from '../models/workflow';
 import { Rule } from '../models/rule';
-import { ExpressionBuilderComponent } from '../expression-builder/expression-builder.component';
-import { RuleResultTreeViewerComponent } from "../rule-result-tree-viewer/rule-result-tree-viewer.component";
 import { ActionRuleResult } from '../models/action-rule-result';
 import { ActionRuleResultViewerComponent } from "../action-rule-result-viewer/action-rule-result-viewer.component";
 
@@ -34,7 +33,6 @@ interface JsonSchema {
     CommonModule,
     FormsModule,
     LucideAngularModule,
-    ExpressionBuilderComponent,
     ActionRuleResultViewerComponent
 ],
   templateUrl: 'context-schema-editor.component.html',
@@ -46,12 +44,14 @@ export class ContextSchemaEditorComponent implements OnChanges {
   schema: JsonSchema | null = null;
   fieldMap: Record<string, { type: FieldType | ''; value: any }> = {};
   actionRuleResult: ActionRuleResult  | null = null;
+  showModal = signal(false);
 
   LayoutGridIcon = LayoutGridIcon;
   FileTextIcon = FileTextIcon;
   CheckCircleIcon = CheckCircleIcon;
   Settings2Icon = Settings2Icon;
   TextCursorInputIcon = TextCursorInputIcon;
+  XIcon = XIcon;
 
   supportedTypes: FieldType[] = ['string', 'number', 'boolean', 'object'];
 
@@ -68,6 +68,15 @@ export class ContextSchemaEditorComponent implements OnChanges {
 
   get availableRules(): { rule: Rule; depth: number }[] {
     return this.getAllRules(this.workflow);
+  }
+
+  openContextModal() {
+    this.logContext()
+    this.showModal.set(true);
+  }
+
+  closeContextModal() {
+    this.showModal.set(false);
   }
 
   private getAllRules(workflow: Workflow): { rule: Rule; depth: number }[] {
