@@ -6,18 +6,25 @@
 
   <!-- Header -->
   <div class="flex justify-between items-center mb-1">
-    <div class="flex items-center gap-1">
+    <div class="flex items-center gap-2">
+      <!-- Success / Fail Icon -->
       <span [ngClass]="{
         'text-green-600': resultTree.isSuccess,
         'text-red-600': !resultTree.isSuccess
       }">
-        <i *ngIf="resultTree.isSuccess" class="lucide-check-circle w-4 h-4"></i>
-        <i *ngIf="!resultTree.isSuccess" class="lucide-x-circle w-4 h-4"></i>
+        <i *ngIf="resultTree.isSuccess" class="lucide-badge-check w-4 h-4"></i>
+        <i *ngIf="!resultTree.isSuccess" class="lucide-x-octagon w-4 h-4"></i>
       </span>
 
+      <!-- Rule name and operator -->
       <div>
-        <div class="font-semibold text-sm truncate">{{ resultTree.rule.ruleName }}</div>
-        <div class="text-xs text-gray-500 truncate">Operator: {{ resultTree.rule.operator ?? 'None' }}</div>
+        <div class="flex items-center gap-1 font-semibold text-sm truncate">
+          <span>{{ resultTree.rule.ruleName }}</span>
+        </div>
+        <div class="text-xs text-gray-500 truncate">
+          <i-lucide [img]="BracketsIcon" class="inline-block w-3.5 h-3.5 text-gray-400 mr-1"></i-lucide>
+          Operator: {{ resultTree.rule.operator ?? 'None' }}
+        </div>
       </div>
     </div>
 
@@ -33,7 +40,9 @@
 
     <!-- Expression -->
     <div *ngIf="resultTree.rule.expression">
-      <div class="text-xs text-gray-400 uppercase">Expression:</div>
+      <div class="text-xs text-gray-400 uppercase flex items-center gap-1">
+        <i-lucide [img]="Code2Icon" class="w-3.5 h-3.5 text-gray-400"></i-lucide> Expression
+      </div>
       <div class="text-xs">{{ resultTree.rule.expression }}</div>
     </div>
 
@@ -45,7 +54,9 @@
       </button>
 
       <div *ngIf="showInputs()" class="mt-1">
-        <div class="text-xs text-gray-400 uppercase">Inputs:</div>
+        <div class="text-xs text-gray-400 uppercase flex items-center gap-1">
+          <i-lucide [img]="ListTreeIcon" class="w-3.5 h-3.5 text-gray-400"></i-lucide> Inputs
+        </div>
         <ul class="list-disc list-inside ml-3 text-xs space-y-1">
           <li *ngFor="let input of flattenObject(resultTree.inputs)">
             {{ getTypeIcon(input.value) }} <span class="font-semibold">{{ input.key }}:</span> {{ input.value }}
@@ -56,25 +67,33 @@
 
     <!-- Error Message -->
     <div *ngIf="resultTree.rule.errorMessage">
-      <div class="text-xs text-gray-400 uppercase">Error:</div>
+      <div class="text-xs text-gray-400 uppercase flex items-center gap-1">
+        <i-lucide [img]="AlertTriangleIcon" class="w-3.5 h-3.5 text-yellow-400"></i-lucide> Error
+      </div>
       <div class="text-xs text-red-600">{{ resultTree.rule.errorMessage }}</div>
     </div>
 
     <!-- Action Result Output -->
     <div *ngIf="resultTree.actionResult?.output">
-      <div class="text-xs text-gray-400 uppercase">Output:</div>
+      <div class="text-xs text-gray-400 uppercase flex items-center gap-1">
+        <i-lucide [img]="TerminalIcon" class="w-3.5 h-3.5 text-gray-400"></i-lucide> Output
+      </div>
       <pre class="bg-gray-100 p-2 rounded text-xs overflow-x-auto">{{ resultTree.actionResult?.output | json }}</pre>
     </div>
 
     <!-- Action Result Exception -->
     <div *ngIf="resultTree.actionResult?.exception">
-      <div class="text-xs text-gray-400 uppercase">Action Exception:</div>
+      <div class="text-xs text-gray-400 uppercase flex items-center gap-1">
+        <i-lucide [img]="BugIcon" class="w-3.5 h-3.5 text-red-500"></i-lucide> Action Exception
+      </div>
       <pre class="bg-red-100 p-2 rounded text-xs text-red-600 overflow-x-auto">{{ resultTree.actionResult?.exception | json }}</pre>
     </div>
 
     <!-- Exception Message -->
     <div *ngIf="resultTree.exceptionMessage">
-      <div class="text-xs text-gray-400 uppercase">Exception:</div>
+      <div class="text-xs text-gray-400 uppercase flex items-center gap-1">
+        <i-lucide [img]="BugIcon" class="w-3.5 h-3.5 text-red-500"></i-lucide> Exception
+      </div>
       <div class="text-xs text-red-500">{{ resultTree.exceptionMessage }}</div>
     </div>
 
