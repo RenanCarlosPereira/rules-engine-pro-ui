@@ -139,7 +139,6 @@ export class ContextSchemaEditorComponent implements OnChanges {
 
   logContext() {
     const rule = this.selectedRule;
-    if (!rule || !this.schema?.properties) return;
 
     const fields = this.fieldMap;
 
@@ -162,7 +161,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
       return result;
     };
 
-    const inputs = buildFromSchema(this.schema.properties);
+    const inputs = buildFromSchema(this.schema?.properties!);
 
     const payload = {
       workflow: this.workflow,
@@ -172,7 +171,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
     this.http
       .post<ActionRuleResult>(
         `http://localhost:5007/execute?ruleName=${encodeURIComponent(
-          rule.ruleName
+          rule?.ruleName ?? ''
         )}`,
         payload
       )
