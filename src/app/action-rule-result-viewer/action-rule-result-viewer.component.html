@@ -1,0 +1,9 @@
+<div *ngIf="actionRuleResult?.results?.length; else noResults" class="space-y-4">
+  <ng-container *ngFor="let result of actionRuleResult?.results ?? []">
+    <app-rule-result-tree-viewer [resultTree]="result"></app-rule-result-tree-viewer>
+  </ng-container>
+</div>
+
+<ng-template #noResults>
+  <p class="text-gray-500 text-sm italic">No results to display.</p>
+</ng-template>

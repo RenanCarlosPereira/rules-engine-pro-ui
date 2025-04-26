@@ -81,7 +81,7 @@
     <div cdkDropList (cdkDropListDropped)="reorderRules($event)">
       <div *ngFor="let rule of workflow.rules; let i = index" cdkDrag>
         <app-rule-node [rule]="rule" [parentRules]="workflow.rules" [indexInParent]="i"
-          (ruleChanged)="syncJsonText()"></app-rule-node>
+          (ruleChanged)="emitChange()"></app-rule-node>
       </div>
     </div>
   </ng-container>

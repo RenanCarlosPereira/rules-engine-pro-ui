@@ -15,6 +15,9 @@ import {
 import { Workflow } from '../models/workflow';
 import { Rule } from '../models/rule';
 import { ExpressionBuilderComponent } from '../expression-builder/expression-builder.component';
+import { RuleResultTreeViewerComponent } from "../rule-result-tree-viewer/rule-result-tree-viewer.component";
+import { ActionRuleResult } from '../models/action-rule-result';
+import { ActionRuleResultViewerComponent } from "../action-rule-result-viewer/action-rule-result-viewer.component";
 
 type FieldType = 'string' | 'number' | 'boolean' | 'object';
 
@@ -32,7 +35,8 @@ interface JsonSchema {
     FormsModule,
     LucideAngularModule,
     ExpressionBuilderComponent,
-  ],
+    ActionRuleResultViewerComponent
+],
   templateUrl: 'context-schema-editor.component.html',
 })
 export class ContextSchemaEditorComponent implements OnChanges {
@@ -41,7 +45,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
   selectedRule: Rule | null = null;
   schema: JsonSchema | null = null;
   fieldMap: Record<string, { type: FieldType | ''; value: any }> = {};
-  finalContext: any = {};
+  actionRuleResult: ActionRuleResult  | null = null;
 
   LayoutGridIcon = LayoutGridIcon;
   FileTextIcon = FileTextIcon;
@@ -58,7 +62,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
       this.selectedRule = null;
       this.schema = null;
       this.fieldMap = {};
-      this.finalContext = {};
+      this.actionRuleResult = null;
     }
   }
 
@@ -92,7 +96,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
   loadSchema() {
     this.http
       .post<JsonSchema>(
-        'https://rules-engine-pro-api.onrender.com/identifiers',
+        'http://localhost:5007/identifiers',
         this.workflow
       )
       .subscribe((data) => {
@@ -157,14 +161,14 @@ export class ContextSchemaEditorComponent implements OnChanges {
     };
 
     this.http
-      .post<Response>(
-        `https://rules-engine-pro-api.onrender.com/execute?ruleName=${encodeURIComponent(
+      .post<ActionRuleResult>(
+        `http://localhost:5007/execute?ruleName=${encodeURIComponent(
           rule.ruleName
         )}`,
         payload
       )
       .subscribe((response) => {
-        this.finalContext = response;
+        this.actionRuleResult = response;
       });
   }
 

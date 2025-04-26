@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RuleNodeComponent } from '../rule-node/rule-node.component';
 import {
@@ -37,6 +37,7 @@ import { ContextSchemaEditorComponent } from '../context-schema-editor/context-s
 })
 export class WorkflowNodeComponent implements OnInit {
   @Input({ required: true }) workflow!: Workflow;
+  @Output() workflowChanged = new EventEmitter<void>();
 
   jsonText = '';
   showJsonModal = false;
@@ -58,7 +59,7 @@ export class WorkflowNodeComponent implements OnInit {
 
   ngOnInit() {
     this.workflow.globalParams ??= [];
-    this.syncJsonText();
+    this.emitChange();
   }
 
   loadSampleWorkflow() {
@@ -67,7 +68,7 @@ export class WorkflowNodeComponent implements OnInit {
         console.log(data);
         this.workflow = data;
         this.workflow.globalParams ??= [];
-        this.syncJsonText();
+        this.emitChange();
       },
       error: (err) => {
         console.error('Failed to load sample workflow:', err);
@@ -111,14 +112,15 @@ export class WorkflowNodeComponent implements OnInit {
 
   updateWorkflowName(name: string) {
     this.workflow.workflowName = name;
-    this.syncJsonText();
+    this.emitChange();
   }
 
   toggleModal() {
     this.showJsonModal = !this.showJsonModal;
   }
 
-  syncJsonText() {
+  emitChange() {
+    this.workflowChanged.emit();
     this.jsonText = JSON.stringify(this.workflow, null, 2);
     this.validationMessages = this.validateWorkflow(this.workflow);
   }
@@ -128,34 +130,35 @@ export class WorkflowNodeComponent implements OnInit {
       const parsed = JSON.parse(newJson);
       this.workflow = parsed;
       this.workflow.globalParams ??= [];
-      this.syncJsonText();
+      this.emitChange();
     } catch (error) {
       console.error('Invalid JSON:', error);
     }
+
   }
 
   addGlobalParam() {
     this.workflow.globalParams ??= [];
     this.workflow.globalParams.push({ name: '', expression: '' });
-    this.syncJsonText();
+    this.emitChange();
   }
 
   deleteGlobalParam(index: number) {
     this.workflow.globalParams?.splice(index, 1);
-    this.syncJsonText();
+    this.emitChange();
   }
 
   updateGlobalParamName(index: number, value: string) {
     if (this.workflow.globalParams) {
       this.workflow.globalParams[index].name = value;
-      this.syncJsonText();
+      this.emitChange();
     }
   }
 
   updateGlobalParamExpression(index: number, value: string) {
     if (this.workflow.globalParams) {
       this.workflow.globalParams[index].expression = value;
-      this.syncJsonText();
+      this.emitChange();
     }
   }
 
@@ -168,7 +171,7 @@ export class WorkflowNodeComponent implements OnInit {
       expression: 'true',
       rules: [],
     });
-    this.syncJsonText();
+    this.emitChange();
   }
 
   resetWorkflow() {
@@ -185,7 +188,7 @@ export class WorkflowNodeComponent implements OnInit {
         },
       ],
     };
-    this.syncJsonText();
+    this.emitChange();
   }
 
   reorderRules(event: any) {
@@ -194,6 +197,6 @@ export class WorkflowNodeComponent implements OnInit {
       event.previousIndex,
       event.currentIndex
     );
-    this.syncJsonText();
+    this.emitChange();
   }
 }

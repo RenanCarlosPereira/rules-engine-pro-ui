@@ -67,11 +67,15 @@
       </div>
     </div>
 
+
+    <app-action-rule-result-viewer [actionRuleResult]="actionRuleResult" ></app-action-rule-result-viewer>
+
+
     <!-- JSON Editor Output -->
     <div class="mt-6">
       <h4 class="text-sm font-semibold text-gray-700 mb-2">Generated Context</h4>
       <div class="overflow-auto max-h-[60vh]">
-        <app-expression-builder [value]="finalContext | json" [languageName]="'json'"></app-expression-builder>
+        <app-expression-builder [value]="actionRuleResult | json" [languageName]="'json'"></app-expression-builder>
       </div>
     </div>
   </ng-container>
