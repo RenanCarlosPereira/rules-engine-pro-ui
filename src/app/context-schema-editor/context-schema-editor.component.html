@@ -16,16 +16,18 @@
       </select>
     </div>
 
-    <div class="flex gap-2 flex-wrap justify-end">
-      <button (click)="loadSchema()"
+    <div class="flex flex-col sm:flex-row gap-2 justify-end">
+
+      <button type="button" (click)="loadSchema()"
         class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition">
         Load Schema
       </button>
 
-      <button (click)="openContextModal()"
+      <button type="button" (click)="openContextModal()"
         class="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-1">
         <i-lucide [img]="CheckCircleIcon" class="w-4 h-4"></i-lucide> Build Context
       </button>
+
     </div>
   </div>
 
