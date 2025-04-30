@@ -270,19 +270,7 @@ export class WorkflowNodeComponent implements OnInit {
   }
 
   resetWorkflow() {
-    this.workflow = {
-      workflowName: 'Your first workflow',
-      globalParams: [],
-      rules: [
-        {
-          ruleName: 'Your first rule',
-          enabled: true,
-          expression: 'true',
-          rules: [],
-          ruleExpressionType: 'LambdaExpression',
-        },
-      ],
-    };
+    this.ngOnInit();
     this.emitChange();
   }
 
