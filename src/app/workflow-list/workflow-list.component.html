@@ -56,6 +56,25 @@
         </span>
       </div>
     </div>
+
+    <div class="flex justify-center items-center gap-4 mt-10" *ngIf="!loading && (skip > 0 || hasMore)">
+      <button (click)="previousPage()" [disabled]="skip === 0"
+        class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition">
+        <i-lucide [img]="Inbox" class="w-4 h-4" />
+        Previous
+      </button>
+
+      <span class="text-sm text-gray-500 font-medium">
+        Showing {{ skip + 1 }}–{{ skip + workflows.length }}
+      </span>
+
+      <button (click)="nextPage()" [disabled]="!hasMore"
+        class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition">
+        Next
+        <i-lucide [img]="Inbox" class="w-4 h-4" />
+      </button>
+    </div>
+
   </div>
 
   <!-- Confirm Delete Modal -->

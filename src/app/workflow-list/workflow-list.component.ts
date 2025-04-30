@@ -3,7 +3,15 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Workflow } from '../models/workflow'; // Adjust path as needed
-import { LucideAngularModule, Trash2, Edit, Inbox, WorkflowIcon, Loader, Plus } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Trash2,
+  Edit,
+  Inbox,
+  WorkflowIcon,
+  Loader,
+  Plus,
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-workflow-list',
@@ -18,6 +26,9 @@ export class WorkflowListComponent implements OnInit {
   workflows: Workflow[] = [];
   loading = true;
   error: string | null = null;
+  skip = 0;
+  take = 12;
+  hasMore = true;
 
   confirmDeleteWorkflow: Workflow | null = null;
   toastMessage: string | null = null;
@@ -26,12 +37,12 @@ export class WorkflowListComponent implements OnInit {
   Trash2 = Trash2;
   Edit = Edit;
   Inbox = Inbox;
-  WorkflowIcon = WorkflowIcon
+  WorkflowIcon = WorkflowIcon;
   Loader = Loader;
-  Plus = Plus
+  Plus = Plus;
 
   ngOnInit(): void {
-  this.loadWorkflows();
+    this.loadWorkflows();
   }
 
   createNewWorkflow(): void {
@@ -39,17 +50,33 @@ export class WorkflowListComponent implements OnInit {
   }
 
   loadWorkflows(): void {
-    this.http.get<Workflow[]>('https://rules-engine-pro-api.onrender.com/workflows').subscribe({
-      next: (data) => {
-        this.workflows = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Failed to load workflows:', err);
-        this.error = 'Failed to load workflows. Please try again later.';
-        this.loading = false;
-      }
-    });
+    this.loading = true;
+    this.http
+      .get<Workflow[]>(
+        `https://rules-engine-pro-api.onrender.com/workflows?skip=${this.skip}&take=${this.take}`
+      )
+      .subscribe({
+        next: (data) => {
+          this.workflows = data;
+          this.hasMore = data.length === this.take;
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Failed to load workflows:', err);
+          this.error = 'Failed to load workflows. Please try again later.';
+          this.loading = false;
+        },
+      });
+  }
+
+  nextPage(): void {
+    this.skip += this.take;
+    this.loadWorkflows();
+  }
+
+  previousPage(): void {
+    this.skip = Math.max(0, this.skip - this.take);
+    this.loadWorkflows();
   }
 
   editWorkflow(workflow: Workflow): void {
@@ -67,19 +94,21 @@ export class WorkflowListComponent implements OnInit {
 
     const name = this.confirmDeleteWorkflow.workflowName;
 
-    this.http.delete(`https://rules-engine-pro-api.onrender.com/workflows/${name}`).subscribe({
-      next: () => {
-        this.workflows = this.workflows.filter(
-          (wf) => wf.workflowName !== name
-        );
-        this.confirmDeleteWorkflow = null;
-        this.showToast(`Workflow "${name}" deleted successfully.`, 'success');
-      },
-      error: (err) => {
-        console.error('Failed to delete workflow:', err);
-        this.showToast('Failed to delete workflow.', 'error');
-      },
-    });
+    this.http
+      .delete(`https://rules-engine-pro-api.onrender.com/workflows/${name}`)
+      .subscribe({
+        next: () => {
+          this.workflows = this.workflows.filter(
+            (wf) => wf.workflowName !== name
+          );
+          this.confirmDeleteWorkflow = null;
+          this.showToast(`Workflow "${name}" deleted successfully.`, 'success');
+        },
+        error: (err) => {
+          console.error('Failed to delete workflow:', err);
+          this.showToast('Failed to delete workflow.', 'error');
+        },
+      });
   }
 
   cancelDeletion(): void {
