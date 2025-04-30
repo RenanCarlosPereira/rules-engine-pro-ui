@@ -1,20 +1,26 @@
 <div class="bg-gray-50 min-h-screen text-gray-900">
 
-  <!-- Sticky Header with New Workflow Button -->
-  <div class="sticky top-0 bg-white z-30 border-b p-4 flex items-center justify-between flex-wrap gap-2">
+  <!-- Sticky Header with Search + New Button -->
+  <div class="sticky top-0 bg-white z-30 border-b p-4 flex flex-wrap items-center justify-between gap-4">
     <h1 class="text-xl font-semibold text-indigo-700 flex items-center gap-2">
       <i-lucide [img]="WorkflowIcon" class="w-6 h-6 text-indigo-500" />
       Workflows
     </h1>
 
-    <div class="inline-flex items-center gap-px rounded overflow-hidden border border-gray-300 bg-white shadow-sm">
+    <div class="flex flex-1 justify-end items-center gap-3 flex-wrap sm:flex-nowrap">
+      <!-- Search input -->
+      <input type="text" placeholder="Search by name..." (input)="searchInput($event)"
+        class="px-3 py-2 w-full sm:w-64 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+
+      <!-- New Workflow button -->
       <button (click)="createNewWorkflow()"
-        class="flex items-center gap-1 px-3 py-1.5 text-xs text-green-700 hover:bg-green-50">
-        <i-lucide [img]="Plus" class="w-3.5 h-3.5" />
+        class="flex items-center gap-1 px-3 py-2 rounded-md border border-green-200 bg-green-50 text-green-700 text-sm font-medium hover:bg-green-100 transition">
+        <i-lucide [img]="Plus" class="w-4 h-4" />
         New Workflow
       </button>
     </div>
   </div>
+
 
   <!-- Content -->
   <div class="p-6 space-y-6">
@@ -35,6 +41,8 @@
       <i-lucide [img]="Inbox" class="mx-auto mb-2 w-8 h-8" />
       No workflows saved yet.
     </div>
+
+
 
     <!-- Workflow Grid -->
     <div *ngIf="workflows.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -57,23 +65,27 @@
       </div>
     </div>
 
-    <div class="flex justify-center items-center gap-4 mt-10" *ngIf="!loading && (skip > 0 || hasMore)">
-      <button (click)="previousPage()" [disabled]="skip === 0"
+    <div class="flex justify-center items-center gap-4 mt-10" *ngIf="!loading && (skip() > 0 || hasMore())">
+      <!-- Previous Button -->
+      <button (click)="previousPage()" [disabled]="skip() === 0"
         class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition">
-        <i-lucide [img]="Inbox" class="w-4 h-4" />
+        <i-lucide [img]="ChevronLeft" class="w-4 h-4" />
         Previous
       </button>
 
+      <!-- Range Indicator -->
       <span class="text-sm text-gray-500 font-medium">
-        Showing {{ skip + 1 }}–{{ skip + workflows.length }}
+        Showing {{ skip() + 1 }}–{{ skip() + workflows.length }}
       </span>
 
-      <button (click)="nextPage()" [disabled]="!hasMore"
+      <!-- Next Button -->
+      <button (click)="nextPage()" [disabled]="!hasMore()"
         class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition">
         Next
-        <i-lucide [img]="Inbox" class="w-4 h-4" />
+        <i-lucide [img]="ChevronRight" class="w-4 h-4" />
       </button>
     </div>
+
 
   </div>
 

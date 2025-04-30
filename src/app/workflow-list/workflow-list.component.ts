@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -11,7 +11,10 @@ import {
   WorkflowIcon,
   Loader,
   Plus,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-angular';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-workflow-list',
@@ -22,13 +25,15 @@ import {
 export class WorkflowListComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private searchChanged$ = new Subject<string>();
 
   workflows: Workflow[] = [];
   loading = true;
   error: string | null = null;
-  skip = 0;
-  take = 12;
-  hasMore = true;
+  search = signal('');
+  skip = signal(0);
+  take = signal(12);
+  hasMore = signal(true);
 
   confirmDeleteWorkflow: Workflow | null = null;
   toastMessage: string | null = null;
@@ -40,25 +45,47 @@ export class WorkflowListComponent implements OnInit {
   WorkflowIcon = WorkflowIcon;
   Loader = Loader;
   Plus = Plus;
+  ChevronRight = ChevronRight;
+  ChevronLeft = ChevronLeft;
 
   ngOnInit(): void {
     this.loadWorkflows();
+
+    this.searchChanged$
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((value) => {
+        this.skip.set(0);
+        this.search.set(value);
+        this.loadWorkflows();
+      });
   }
 
   createNewWorkflow(): void {
     this.router.navigate(['workflows/editor']);
   }
 
+  searchInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchChanged$.next(target.value);
+  }
+
   loadWorkflows(): void {
     this.loading = true;
+
+    const params = new URLSearchParams({
+      skip: this.skip().toString(),
+      take: this.take().toString(),
+      ...(this.search().trim() ? { workflowName: this.search().trim() } : {}),
+    });
+
     this.http
       .get<Workflow[]>(
-        `https://rules-engine-pro-api.onrender.com/workflows?skip=${this.skip}&take=${this.take}`
+        `https://rules-engine-pro-api.onrender.com/workflows?${params}`
       )
       .subscribe({
         next: (data) => {
           this.workflows = data;
-          this.hasMore = data.length === this.take;
+          this.hasMore.set(data.length === this.take());
           this.loading = false;
         },
         error: (err) => {
@@ -70,12 +97,12 @@ export class WorkflowListComponent implements OnInit {
   }
 
   nextPage(): void {
-    this.skip += this.take;
+    this.skip.set(this.skip() + this.take());
     this.loadWorkflows();
   }
 
   previousPage(): void {
-    this.skip = Math.max(0, this.skip - this.take);
+    this.skip.set(Math.max(0, this.skip() - this.take()));
     this.loadWorkflows();
   }
 
