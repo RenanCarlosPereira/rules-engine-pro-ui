@@ -28,7 +28,7 @@ import { Workflow } from '../models/workflow';
 import { HttpClient } from '@angular/common/http';
 import { DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextSchemaEditorComponent } from '../context-schema-editor/context-schema-editor.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-workflow-node',
@@ -40,6 +40,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     ExpressionBuilderComponent,
     DragDropModule,
     ContextSchemaEditorComponent,
+    RouterModule
   ],
   templateUrl: './workflow-node.component.html',
 })
@@ -102,6 +103,10 @@ export class WorkflowNodeComponent implements OnInit {
           });
       }
     });
+  }
+
+  get workflowName(): string {
+    return this.workflow?.workflowName || 'Unnamed';
   }
 
   goBack() {
