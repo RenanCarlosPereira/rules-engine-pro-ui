@@ -40,7 +40,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
     ExpressionBuilderComponent,
     DragDropModule,
     ContextSchemaEditorComponent,
-    RouterModule
+    RouterModule,
   ],
   templateUrl: './workflow-node.component.html',
 })
@@ -59,6 +59,7 @@ export class WorkflowNodeComponent implements OnInit {
   alertMessage: string | null = null;
   alertType: 'success' | 'error' | null = null;
   isSaving = false;
+  isExistingWorkflow = false;
 
   readonly Trash2 = Trash2;
   readonly Plus = Plus;
@@ -83,11 +84,14 @@ export class WorkflowNodeComponent implements OnInit {
 
       if (workflowName) {
         this.http
-          .get<Workflow>(`https://rules-engine-pro-api.onrender.com/workflows/${workflowName}`)
+          .get<Workflow>(
+            `https://rules-engine-pro-api.onrender.com/workflows/${workflowName}`
+          )
           .subscribe({
             next: (wf) => {
               this.workflow = wf;
               this.workflow.globalParams ??= [];
+              this.isExistingWorkflow = true;
               this.emitChange();
             },
             error: (err) => {
@@ -137,27 +141,35 @@ export class WorkflowNodeComponent implements OnInit {
     }
 
     this.isSaving = true;
-    this.http
-      .post(`https://rules-engine-pro-api.onrender.com/workflows`, this.workflow)
-      .subscribe({
-        next: () => {
-          this.alertType = 'success';
-          this.alertMessage = `Workflow '${this.workflow.workflowName}' saved successfully!`;
-          this.isSaving = false;
 
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { workflow: this.workflow.workflowName },
-            queryParamsHandling: 'merge',
-          });
-        },
-        error: (err) => {
-          console.error('Error saving workflow:', err);
-          this.alertType = 'error';
-          this.alertMessage = 'Failed to save workflow.';
-          this.isSaving = false;
-        },
-      });
+    const url = this.isExistingWorkflow
+      ? `https://rules-engine-pro-api.onrender.com/workflows/${this.workflow.workflowName}`
+      : `https://rules-engine-pro-api.onrender.com/workflows`;
+
+    const request = this.isExistingWorkflow
+      ? this.http.put(url, this.workflow)
+      : this.http.post(url, this.workflow);
+
+    request.subscribe({
+      next: () => {
+        this.alertType = 'success';
+        this.alertMessage = `Workflow '${this.workflow.workflowName}' saved successfully!`;
+        this.isSaving = false;
+        this.isExistingWorkflow = true; // ensure it’s flagged now
+
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { workflow: this.workflow.workflowName },
+          queryParamsHandling: 'merge',
+        });
+      },
+      error: (err) => {
+        console.error('Error saving workflow:', err);
+        this.alertType = 'error';
+        this.alertMessage = 'Failed to save workflow.';
+        this.isSaving = false;
+      },
+    });
   }
 
   validateWorkflow(workflow: Workflow): string[] {
