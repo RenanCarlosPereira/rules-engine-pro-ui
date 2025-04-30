@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Workflow } from './models/workflow';
 import { WorkflowNodeComponent } from './workflow-node/workflow-node.component';
@@ -18,13 +18,16 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    WorkflowNodeComponent,
     LucideAngularModule,
+    RouterOutlet,
+    RouterModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent {
+
+
+  export class AppComponent {
   title = 'rules-engine-ui';
   menuOpen = false;
   userMenuOpen = false;

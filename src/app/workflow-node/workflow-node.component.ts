@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RuleNodeComponent } from '../rule-node/rule-node.component';
 import {
@@ -14,12 +14,14 @@ import {
   WorkflowIcon,
   GripVertical,
   SettingsIcon,
+  ArrowLeft,
 } from 'lucide-angular';
 import { ExpressionBuilderComponent } from '../expression-builder/expression-builder.component';
 import { Workflow } from '../models/workflow';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextSchemaEditorComponent } from '../context-schema-editor/context-schema-editor.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-workflow-node',
@@ -29,7 +31,6 @@ import { ContextSchemaEditorComponent } from '../context-schema-editor/context-s
     RuleNodeComponent,
     LucideAngularModule,
     ExpressionBuilderComponent,
-    HttpClientModule,
     DragDropModule,
     ContextSchemaEditorComponent,
   ],
@@ -42,6 +43,10 @@ export class WorkflowNodeComponent implements OnInit {
   jsonText = '';
   showJsonModal = false;
   validationMessages: string[] = [];
+  alertMessage: string | null = null;
+  alertType: 'success' | 'error' | null = null;
+  isSaving = false;
+
 
   readonly Trash2 = Trash2;
   readonly Plus = Plus;
@@ -54,12 +59,40 @@ export class WorkflowNodeComponent implements OnInit {
   readonly GripVertical = GripVertical;
   readonly LayoutGridIcon = LayoutGridIcon;
   readonly SettingsIcon = SettingsIcon;
+  readonly ArrowLeft = ArrowLeft;
 
-  constructor(private http: HttpClient) {}
+  http = inject(HttpClient);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
+
+
 
   ngOnInit() {
-    this.workflow.globalParams ??= [];
-    this.emitChange();
+    this.route.queryParamMap.subscribe(params => {
+      const workflowName = params.get('workflow');
+
+      if (workflowName) {
+        this.http.get<Workflow>(`https://localhost:5001/workflows/${workflowName}`).subscribe({
+          next: (wf) => {
+            this.workflow = wf;
+            this.workflow.globalParams ??= [];
+            this.emitChange();
+          },
+          error: (err) => {
+            this.router.navigate([], {
+              relativeTo: this.route,
+              queryParams: { workflow: null },
+              queryParamsHandling: 'merge',
+              replaceUrl: true
+            });
+          }
+        });
+      }
+    });
+  }
+
+  goBack() {
+    this.router.navigate(['/workflows']);
   }
 
   loadSampleWorkflow() {
@@ -73,6 +106,37 @@ export class WorkflowNodeComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load sample workflow:', err);
       },
+    });
+  }
+
+  saveWorkflow() {
+    this.validationMessages = this.validateWorkflow(this.workflow);
+
+    if (this.validationMessages.length > 0) {
+      this.alertType = 'error';
+      this.alertMessage = 'Please fix validation errors before saving.';
+      return;
+    }
+
+    this.isSaving = true;
+    this.http.post(`https://localhost:5001/workflows`, this.workflow).subscribe({
+      next: () => {
+        this.alertType = 'success';
+        this.alertMessage = `Workflow '${this.workflow.workflowName}' saved successfully!`;
+        this.isSaving = false;
+
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { workflow: this.workflow.workflowName },
+          queryParamsHandling: 'merge',
+        });
+      },
+      error: (err) => {
+        console.error('Error saving workflow:', err);
+        this.alertType = 'error';
+        this.alertMessage = 'Failed to save workflow.';
+        this.isSaving = false;
+      }
     });
   }
 

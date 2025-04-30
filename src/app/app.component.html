@@ -41,7 +41,8 @@
           'md:relative md:translate-x-0 md:h-auto': true
         }">
       <nav class="space-y-2 mt-16 md:mt-0">
-        <a routerLink="/workflows" class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded">
+        <a routerLink="/workflows" routerLinkActive="bg-gray-800"
+          class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded">
           <i-lucide [img]="List" class="w-5 h-5"></i-lucide>
           <span>Workflows</span>
         </a>
@@ -53,8 +54,8 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-4 md:p-6 bg-gray-100 overflow-auto">
-      <app-workflow-node [workflow]="workflow" />
-    </main>
+    <div class="flex-1 p-4">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

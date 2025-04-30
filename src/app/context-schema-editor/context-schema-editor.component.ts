@@ -105,7 +105,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
   loadSchema() {
     this.http
       .post<JsonSchema>(
-        'https://rules-engine-pro-api.onrender.com/identifiers',
+        'https://localhost:5001/workflows/identifiers',
         this.workflow
       )
       .subscribe((data) => {
@@ -170,7 +170,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
 
     this.http
       .post<ActionRuleResult>(
-        `https://rules-engine-pro-api.onrender.com/execute?ruleName=${encodeURIComponent(
+        `https://localhost:5001/workflows/execute?ruleName=${encodeURIComponent(
           rule?.ruleName ?? ''
         )}`,
         payload

@@ -1,11 +1,33 @@
 <!-- Toolbar Menu -->
 <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b pb-3">
-  <h2 class="text-xl font-bold text-indigo-800 flex items-center gap-2 w-full sm:w-auto">
-    <i-lucide [img]="WorkflowIcon" class="w-5 h-5 text-indigo-600" />
-    Workflow Editor
-  </h2>
 
+  <!-- Back Button -->
+  <button (click)="goBack()"
+    class="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-100 transition">
+    <i-lucide [img]="ArrowLeft" class="w-4 h-4" />
+    Back
+  </button>
+
+  <!-- Buttons -->
   <div class="flex flex-wrap justify-start sm:justify-end items-center gap-2 w-full sm:w-auto">
+
+    <button (click)="saveWorkflow()" [disabled]="isSaving"
+      class="flex items-center gap-2 px-3 py-1 text-sm rounded shadow-sm transition
+             text-white bg-indigo-700 hover:bg-indigo-800 disabled:opacity-60 disabled:cursor-not-allowed">
+      <i-lucide [img]="SettingsIcon" class="w-4 h-4" />
+      <span *ngIf="!isSaving">Save Workflow</span>
+      <span *ngIf="isSaving" class="flex items-center gap-1">
+        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+            stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+        </svg>
+        Saving...
+      </span>
+    </button>
+
     <button (click)="addRootRule()"
       class="flex items-center gap-1 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 shadow-sm">
       <i-lucide [img]="Plus" class="w-4 h-4" /> Add Rule
@@ -25,8 +47,10 @@
       class="flex items-center gap-1 px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 shadow-sm">
       <i-lucide [img]="RotateCcw" class="w-4 h-4" /> Reset
     </button>
+
   </div>
 </div>
+
 
 <div class="mb-4">
   <input class="text-2xl font-bold text-indigo-800 bg-transparent w-full border-b border-indigo-200 focus:outline-none"
@@ -40,6 +64,18 @@
     </ul>
   </div>
 </div>
+
+<div *ngIf="alertMessage" [ngClass]="{
+  'bg-green-100 border-green-400 text-green-700': alertType === 'success',
+  'bg-red-100 border-red-400 text-red-700': alertType === 'error'
+}"
+class="rounded border px-4 py-3 mb-4 text-sm flex items-center justify-between">
+<span>{{ alertMessage }}</span>
+<button (click)="alertMessage = null" class="ml-4 text-sm text-gray-600 hover:text-gray-800">
+  ✕
+</button>
+</div>
+
 
 <!-- Compact Global Parameters Card -->
 <div class="bg-white rounded-lg shadow-sm p-3 mb-4 border border-gray-200">

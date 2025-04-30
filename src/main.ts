@@ -1,14 +1,14 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { AppComponent } from './app/app.component';
-import { appConfig } from './app/app.config';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { routes } from './app/app.routes';
 
 bootstrapApplication(AppComponent, {
-  ...appConfig,
   providers: [
-    ...(appConfig.providers || []),
-    provideAnimations(),
-    provideHttpClient(),
-  ],
-}).catch((err) => console.error(err));
+    provideHttpClient(withInterceptorsFromDi()),
+    provideRouter(routes),
+    provideAnimations()
+  ]
+});
