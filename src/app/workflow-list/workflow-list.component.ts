@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Workflow } from '../models/workflow'; // Adjust path as needed
-import { LucideAngularModule, Trash2, Edit, Inbox, WorkflowIcon, Loader } from 'lucide-angular';
+import { LucideAngularModule, Trash2, Edit, Inbox, WorkflowIcon, Loader, Plus } from 'lucide-angular';
 
 @Component({
   selector: 'app-workflow-list',
@@ -28,20 +28,26 @@ export class WorkflowListComponent implements OnInit {
   Inbox = Inbox;
   WorkflowIcon = WorkflowIcon
   Loader = Loader;
+  Plus = Plus
 
   ngOnInit(): void {
   this.loadWorkflows();
   }
 
+  createNewWorkflow(): void {
+    this.router.navigate(['workflows/editor']);
+  }
+
   loadWorkflows(): void {
-    console.log('Loading workflows...');
-    this.http.get<Workflow[]>('https://localhost:5001/workflows').subscribe({
+    this.http.get<Workflow[]>('https://rules-engine-pro-api.onrender.com/workflows').subscribe({
       next: (data) => {
-        console.log('Workflows loaded:', data);
         this.workflows = data;
+        this.loading = false;
       },
       error: (err) => {
         console.error('Failed to load workflows:', err);
+        this.error = 'Failed to load workflows. Please try again later.';
+        this.loading = false;
       }
     });
   }
@@ -61,7 +67,7 @@ export class WorkflowListComponent implements OnInit {
 
     const name = this.confirmDeleteWorkflow.workflowName;
 
-    this.http.delete(`https://localhost:5001/workflows/${name}`).subscribe({
+    this.http.delete(`https://rules-engine-pro-api.onrender.com/workflows/${name}`).subscribe({
       next: () => {
         this.workflows = this.workflows.filter(
           (wf) => wf.workflowName !== name

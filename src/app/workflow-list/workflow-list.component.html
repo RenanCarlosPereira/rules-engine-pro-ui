@@ -1,76 +1,103 @@
-<div class="p-4">
-  <h1 class="text-2xl font-bold text-indigo-700 mb-6 flex items-center gap-2">
-    <i-lucide [img]="WorkflowIcon" class="w-6 h-6 text-indigo-500" />
-    Saved Workflows
-  </h1>
+<div class="bg-gray-50 min-h-screen text-gray-900">
 
-  <!-- Loading and error -->
-  <div *ngIf="loading" class="text-gray-500 italic mb-4 flex items-center gap-2">
-    <i-lucide [img]="Loader" class="w-4 h-4 animate-spin" /> Loading workflows...
-  </div>
-  <div *ngIf="error" class="bg-red-50 border border-red-300 text-red-700 px-4 py-2 rounded mb-4 text-sm">
-    {{ error }}
-  </div>
-
-  <!-- Empty state -->
-  <div *ngIf="!loading && workflows.length === 0" class="text-center text-gray-400 py-10 italic">
-    <i-lucide [img]="Inbox" class="mx-auto mb-2 w-8 h-8" />
-    No workflows saved yet.
+  <!-- Sticky Header -->
+  <div class="sticky top-0 bg-white z-30 border-b p-4 flex items-center justify-between">
+    <h1 class="text-xl font-semibold text-indigo-700 flex items-center gap-2">
+      <i-lucide [img]="WorkflowIcon" class="w-6 h-6 text-indigo-500" />
+      Saved Workflows
+    </h1>
+    <button (click)="createNewWorkflow()"
+            class="flex items-center gap-2 px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition shadow">
+      <i-lucide [img]="Plus" class="w-4 h-4" />
+      New Workflow
+    </button>
   </div>
 
-  <!-- Grid -->
-  <div *ngIf="workflows.length > 0"
-       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    <div *ngFor="let wf of workflows"
-         class="relative border border-gray-200 rounded-xl shadow p-4 bg-white hover:shadow-md transition group">
-      <div class="flex justify-between items-start">
-        <h2 class="text-lg font-semibold text-indigo-800 truncate">{{ wf.workflowName }}</h2>
-        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button (click)="editWorkflow(wf)"
-                  class="text-blue-600 hover:text-blue-800"
-                  title="Edit">
-            <i-lucide [img]="Edit" class="w-4 h-4" />
-          </button>
-          <button (click)="deleteWorkflow(wf)"
-                  class="text-red-600 hover:text-red-800"
-                  title="Delete">
-            <i-lucide [img]="Trash2" class="w-4 h-4" />
-          </button>
+  <!-- Content -->
+  <div class="p-6 space-y-6">
+
+    <!-- Status Messages -->
+    <div *ngIf="loading" class="text-gray-500 italic flex items-center gap-2">
+      <i-lucide [img]="Loader" class="w-4 h-4 animate-spin" />
+      Loading workflows...
+    </div>
+
+    <div *ngIf="error"
+         class="bg-red-50 border border-red-300 text-red-700 px-4 py-2 rounded text-sm">
+      {{ error }}
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && workflows.length === 0"
+         class="text-center text-gray-400 py-10 italic border rounded-md bg-white shadow-sm">
+      <i-lucide [img]="Inbox" class="mx-auto mb-2 w-8 h-8" />
+      No workflows saved yet.
+    </div>
+
+    <!-- Workflow Grid -->
+    <div *ngIf="workflows.length > 0"
+         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div *ngFor="let wf of workflows"
+           class="relative border border-gray-200 rounded-xl shadow-sm p-4 bg-white transform transition hover:shadow-lg hover:scale-[1.02] hover:border-indigo-300 group">
+        <div class="flex justify-between items-start">
+          <h2 class="text-lg font-semibold text-indigo-800 truncate">{{ wf.workflowName }}</h2>
+          <div class="flex gap-2">
+            <button (click)="editWorkflow(wf)" class="text-blue-600 hover:text-blue-800" title="Edit">
+              <i-lucide [img]="Edit" class="w-4 h-4" />
+            </button>
+            <button (click)="deleteWorkflow(wf)" class="text-red-600 hover:text-red-800" title="Delete">
+              <i-lucide [img]="Trash2" class="w-4 h-4" />
+            </button>
+          </div>
         </div>
+        <span class="inline-block bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded mt-2">
+          {{ wf.rules.length }} {{ wf.rules.length === 1 ? 'rule' : 'rules' }}
+        </span>
       </div>
-      <p class="text-sm text-gray-500 mt-1">{{ wf.rules.length }} rule(s)</p>
     </div>
   </div>
-</div>
 
-<!-- Confirm Delete Modal -->
-<div *ngIf="confirmDeleteWorkflow"
-     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-  <div class="bg-white rounded-xl p-6 w-full max-w-sm text-center shadow-lg animate-scale-in">
-    <h2 class="text-lg font-semibold text-gray-800 mb-2">Delete Workflow</h2>
-    <p class="text-sm text-gray-600 mb-4">
-      Are you sure you want to delete
-      <span class="font-medium text-red-700">"{{ confirmDeleteWorkflow.workflowName }}"</span>?
-    </p>
-    <div class="flex justify-center gap-3">
-      <button (click)="confirmDeletion()"
-              class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
-        Yes, Delete
-      </button>
-      <button (click)="cancelDeletion()"
-              class="px-4 py-2 border rounded text-sm hover:bg-gray-100">
-        Cancel
-      </button>
+  <!-- Floating Action Button -->
+  <div class="fixed bottom-6 right-6 flex items-center gap-2 group z-50">
+    <span
+      class="opacity-0 group-hover:opacity-100 bg-black text-white text-xs rounded px-2 py-1 transition duration-200">
+      New Workflow
+    </span>
+    <button (click)="createNewWorkflow()"
+            class="bg-green-600 text-white rounded-full shadow-lg p-4 hover:bg-green-700 transition">
+      <i-lucide [img]="Plus" class="w-5 h-5" />
+    </button>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div *ngIf="confirmDeleteWorkflow"
+       class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white rounded-xl p-6 w-full max-w-sm text-center shadow-lg animate-scale-in">
+      <h2 class="text-lg font-semibold text-gray-800 mb-2">Delete Workflow</h2>
+      <p class="text-sm text-gray-600 mb-4">
+        Are you sure you want to delete
+        <span class="font-medium text-red-700">"{{ confirmDeleteWorkflow.workflowName }}"</span>?
+      </p>
+      <div class="flex justify-center gap-3">
+        <button (click)="confirmDeletion()"
+                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
+          Yes, Delete
+        </button>
+        <button (click)="cancelDeletion()"
+                class="px-4 py-2 border rounded text-sm hover:bg-gray-100">
+          Cancel
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Toast -->
-<div *ngIf="toastMessage"
-     [ngClass]="{
+  <!-- Toast -->
+  <div *ngIf="toastMessage"
+       [ngClass]="{
         'bg-green-100 text-green-800 border-green-300': toastType === 'success',
         'bg-red-100 text-red-800 border-red-300': toastType === 'error'
      }"
-     class="fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg border text-sm animate-fade-in z-50">
-  {{ toastMessage }}
+       class="fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg border text-sm animate-fade-in z-50">
+    {{ toastMessage }}
+  </div>
 </div>

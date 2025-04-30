@@ -1,4 +1,11 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RuleNodeComponent } from '../rule-node/rule-node.component';
 import {
@@ -37,7 +44,12 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './workflow-node.component.html',
 })
 export class WorkflowNodeComponent implements OnInit {
-  @Input({ required: true }) workflow!: Workflow;
+  workflow: Workflow = {
+    workflowName: 'New Workflow',
+    globalParams: [],
+    rules: [],
+  };
+
   @Output() workflowChanged = new EventEmitter<void>();
 
   jsonText = '';
@@ -46,7 +58,6 @@ export class WorkflowNodeComponent implements OnInit {
   alertMessage: string | null = null;
   alertType: 'success' | 'error' | null = null;
   isSaving = false;
-
 
   readonly Trash2 = Trash2;
   readonly Plus = Plus;
@@ -65,28 +76,30 @@ export class WorkflowNodeComponent implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
 
-
-
   ngOnInit() {
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.subscribe((params) => {
       const workflowName = params.get('workflow');
 
       if (workflowName) {
-        this.http.get<Workflow>(`https://localhost:5001/workflows/${workflowName}`).subscribe({
-          next: (wf) => {
-            this.workflow = wf;
-            this.workflow.globalParams ??= [];
-            this.emitChange();
-          },
-          error: (err) => {
-            this.router.navigate([], {
-              relativeTo: this.route,
-              queryParams: { workflow: null },
-              queryParamsHandling: 'merge',
-              replaceUrl: true
-            });
-          }
-        });
+        this.http
+          .get<Workflow>(`https://rules-engine-pro-api.onrender.com/workflows/${workflowName}`)
+          .subscribe({
+            next: (wf) => {
+              this.workflow = wf;
+              this.workflow.globalParams ??= [];
+              this.emitChange();
+            },
+            error: (err) => {
+              console.warn('Workflow not found, using default.');
+              this.resetWorkflow(); // fallback to default
+              this.router.navigate([], {
+                relativeTo: this.route,
+                queryParams: { workflow: null },
+                queryParamsHandling: 'merge',
+                replaceUrl: true,
+              });
+            },
+          });
       }
     });
   }
@@ -119,25 +132,27 @@ export class WorkflowNodeComponent implements OnInit {
     }
 
     this.isSaving = true;
-    this.http.post(`https://localhost:5001/workflows`, this.workflow).subscribe({
-      next: () => {
-        this.alertType = 'success';
-        this.alertMessage = `Workflow '${this.workflow.workflowName}' saved successfully!`;
-        this.isSaving = false;
+    this.http
+      .post(`https://rules-engine-pro-api.onrender.com/workflows`, this.workflow)
+      .subscribe({
+        next: () => {
+          this.alertType = 'success';
+          this.alertMessage = `Workflow '${this.workflow.workflowName}' saved successfully!`;
+          this.isSaving = false;
 
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { workflow: this.workflow.workflowName },
-          queryParamsHandling: 'merge',
-        });
-      },
-      error: (err) => {
-        console.error('Error saving workflow:', err);
-        this.alertType = 'error';
-        this.alertMessage = 'Failed to save workflow.';
-        this.isSaving = false;
-      }
-    });
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { workflow: this.workflow.workflowName },
+            queryParamsHandling: 'merge',
+          });
+        },
+        error: (err) => {
+          console.error('Error saving workflow:', err);
+          this.alertType = 'error';
+          this.alertMessage = 'Failed to save workflow.';
+          this.isSaving = false;
+        },
+      });
   }
 
   validateWorkflow(workflow: Workflow): string[] {
@@ -198,7 +213,6 @@ export class WorkflowNodeComponent implements OnInit {
     } catch (error) {
       console.error('Invalid JSON:', error);
     }
-
   }
 
   addGlobalParam() {
