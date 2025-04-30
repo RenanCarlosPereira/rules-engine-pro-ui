@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,13 +16,14 @@ import {
   FileTextIcon,
   LayoutGridIcon,
   Settings2Icon,
-  XIcon
+  XIcon,
+  RefreshCcwIcon,
 } from 'lucide-angular';
 
 import { Workflow } from '../models/workflow';
 import { Rule } from '../models/rule';
 import { ActionRuleResult } from '../models/action-rule-result';
-import { ActionRuleResultViewerComponent } from "../action-rule-result-viewer/action-rule-result-viewer.component";
+import { ActionRuleResultViewerComponent } from '../action-rule-result-viewer/action-rule-result-viewer.component';
 
 type FieldType = 'string' | 'number' | 'boolean' | 'object';
 
@@ -33,8 +40,8 @@ interface JsonSchema {
     CommonModule,
     FormsModule,
     LucideAngularModule,
-    ActionRuleResultViewerComponent
-],
+    ActionRuleResultViewerComponent,
+  ],
   templateUrl: 'context-schema-editor.component.html',
 })
 export class ContextSchemaEditorComponent implements OnChanges {
@@ -43,7 +50,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
   selectedRule: Rule | null = null;
   schema: JsonSchema | null = null;
   fieldMap: Record<string, { type: FieldType | ''; value: any }> = {};
-  actionRuleResult: ActionRuleResult  | null = null;
+  actionRuleResult: ActionRuleResult | null = null;
   showModal = signal(false);
 
   LayoutGridIcon = LayoutGridIcon;
@@ -52,6 +59,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
   Settings2Icon = Settings2Icon;
   TextCursorInputIcon = TextCursorInputIcon;
   XIcon = XIcon;
+  RefreshCcwIcon = RefreshCcwIcon;
 
   supportedTypes: FieldType[] = ['string', 'number', 'boolean', 'object'];
 
@@ -71,7 +79,7 @@ export class ContextSchemaEditorComponent implements OnChanges {
   }
 
   openContextModal() {
-    this.logContext()
+    this.logContext();
     this.showModal.set(true);
   }
 
