@@ -15,6 +15,7 @@ import {
   ChevronLeft,
 } from 'lucide-angular';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-workflow-list',
@@ -79,9 +80,7 @@ export class WorkflowListComponent implements OnInit {
     });
 
     this.http
-      .get<Workflow[]>(
-        `https://rules-engine-pro-api.onrender.com/workflows?${params}`
-      )
+      .get<Workflow[]>(`${environment.apiUrl}/workflows?${params}`, { withCredentials: true })
       .subscribe({
         next: (data) => {
           this.workflows = data;
@@ -122,7 +121,7 @@ export class WorkflowListComponent implements OnInit {
     const name = this.confirmDeleteWorkflow.workflowName;
 
     this.http
-      .delete(`https://rules-engine-pro-api.onrender.com/workflows/${name}`)
+      .delete(`${environment.apiUrl}/workflows/${name}`,{ withCredentials: true })
       .subscribe({
         next: () => {
           this.workflows = this.workflows.filter(

@@ -29,6 +29,7 @@ import { HttpClient } from '@angular/common/http';
 import { DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ContextSchemaEditorComponent } from '../context-schema-editor/context-schema-editor.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-workflow-node',
@@ -85,7 +86,8 @@ export class WorkflowNodeComponent implements OnInit {
       if (workflowName) {
         this.http
           .get<Workflow>(
-            `https://rules-engine-pro-api.onrender.com/workflows/${workflowName}`
+            `${environment.apiUrl}/workflows/${workflowName}`,
+            { withCredentials: true }
           )
           .subscribe({
             next: (wf) => {
@@ -143,12 +145,12 @@ export class WorkflowNodeComponent implements OnInit {
     this.isSaving = true;
 
     const url = this.isExistingWorkflow
-      ? `https://rules-engine-pro-api.onrender.com/workflows/${this.workflow.workflowName}`
-      : `https://rules-engine-pro-api.onrender.com/workflows`;
+      ? `${environment.apiUrl}/workflows/${this.workflow.workflowName}`
+      : `${environment.apiUrl}/workflows`;
 
     const request = this.isExistingWorkflow
-      ? this.http.put(url, this.workflow)
-      : this.http.post(url, this.workflow);
+      ? this.http.put(url, this.workflow, { withCredentials: true })
+      : this.http.post(url, this.workflow, { withCredentials: true });
 
     request.subscribe({
       next: () => {

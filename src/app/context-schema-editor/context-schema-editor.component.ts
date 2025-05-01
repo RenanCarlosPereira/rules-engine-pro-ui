@@ -24,6 +24,7 @@ import { Workflow } from '../models/workflow';
 import { Rule } from '../models/rule';
 import { ActionRuleResult } from '../models/action-rule-result';
 import { ActionRuleResultViewerComponent } from '../action-rule-result-viewer/action-rule-result-viewer.component';
+import { environment } from '../../environments/environment';
 
 type FieldType = 'string' | 'number' | 'boolean' | 'object';
 
@@ -113,8 +114,9 @@ export class ContextSchemaEditorComponent implements OnChanges {
   loadSchema() {
     this.http
       .post<JsonSchema>(
-        'https://rules-engine-pro-api.onrender.com/workflows/identifiers',
-        this.workflow
+        `${environment.apiUrl}/workflows/identifiers`,
+        this.workflow,
+        { withCredentials: true }
       )
       .subscribe((data) => {
         if (!data || !data.properties) return;
@@ -177,12 +179,9 @@ export class ContextSchemaEditorComponent implements OnChanges {
     };
 
     this.http
-      .post<ActionRuleResult>(
-        `https://rules-engine-pro-api.onrender.com/workflows/execute?ruleName=${encodeURIComponent(
-          rule?.ruleName ?? ''
-        )}`,
-        payload
-      )
+      .post<ActionRuleResult>(`${environment.apiUrl}/workflows/execute?ruleName=${encodeURIComponent(rule?.ruleName ?? '')}`,
+      payload,
+      { withCredentials: true })
       .subscribe((response) => {
         this.actionRuleResult = response;
       });

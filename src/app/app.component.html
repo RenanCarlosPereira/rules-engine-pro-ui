@@ -4,7 +4,7 @@
     <!-- Left: Logo and App name -->
     <div class="flex items-center gap-2">
       <i-lucide [img]="GripVertical" class="w-5 h-5 text-blue-600"></i-lucide>
-      <h1 class="text-xl font-bold text-gray-800">rules Engine</h1>
+      <h1 class="text-xl font-bold text-gray-800">Rules Engine</h1>
     </div>
 
     <!-- Right: Mobile menu toggle and user avatar -->
@@ -16,13 +16,15 @@
 
       <!-- User avatar dropdown -->
       <div class="relative" (click)="userMenuOpen = !userMenuOpen">
-        <img src="https://i.pravatar.cc/40?u=user" alt="User Avatar"
+        <img [src]="userAvatar()" alt="User Avatar"
           class="w-8 h-8 rounded-full cursor-pointer border border-gray-300" />
         <div *ngIf="userMenuOpen" class="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md z-50 text-sm">
           <a href="#" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
           <a href="#" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
           <hr class="my-1" />
-          <a href="#" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+          <button (click)="logout()" class="w-full text-left block px-4 py-2 hover:bg-gray-100">
+            Logout
+          </button>
         </div>
       </div>
     </div>
@@ -36,21 +38,36 @@
     <aside
       class="bg-gray-900 text-white w-64 p-4 transform transition-transform duration-300 ease-in-out md:translate-x-0"
       [ngClass]="{
-          'absolute z-50 top-0 left-0 h-full translate-x-0': menuOpen,
-          '-translate-x-full absolute z-50 top-0 left-0 h-full': !menuOpen,
-          'md:relative md:translate-x-0 md:h-auto': true
-        }">
-      <nav class="space-y-2 mt-16 md:mt-0">
+        'absolute z-50 top-0 left-0 h-full translate-x-0': menuOpen,
+        '-translate-x-full absolute z-50 top-0 left-0 h-full': !menuOpen,
+        'md:relative md:translate-x-0 md:h-auto': true
+      }">
+
+      <!-- User Info -->
+      <div class="flex flex-col items-center text-center mb-6 mt-4">
+        <div *ngIf="!user()" class="w-16 h-16 bg-gray-700 rounded-full animate-pulse mb-2"></div>
+        <img *ngIf="user()" [src]="userAvatar()" class="w-16 h-16 rounded-full border-2 border-white mb-2" />
+        <div class="text-sm text-gray-300 font-medium truncate w-full px-2">
+          {{ user()?.name || user()?.login }}
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="space-y-2">
         <a routerLink="/workflows" routerLinkActive="bg-gray-800"
           class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded">
           <i-lucide [img]="List" class="w-5 h-5"></i-lucide>
           <span>Workflows</span>
         </a>
+        <a (click)="logout()" class="flex items-center space-x-2 hover:bg-gray-800 px-3 py-2 rounded cursor-pointer">
+          <i-lucide [img]="LogOut" class="w-5 h-5"></i-lucide>
+          <span>Logout</span>
+        </a>
       </nav>
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 p-4">
+    <div class="flex-1 p-2">
       <router-outlet></router-outlet>
     </div>
   </div>
