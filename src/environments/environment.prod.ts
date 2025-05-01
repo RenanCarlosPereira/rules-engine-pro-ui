@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://rules-engine-pro-api.onrender.com'
+  apiUrl: 'https://rules-engine-pro-api.onrender.com'
 };
