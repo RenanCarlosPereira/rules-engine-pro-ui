@@ -47,22 +47,31 @@
     <!-- Workflow Grid -->
     <div *ngIf="workflows.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <div *ngFor="let wf of workflows"
-        class="relative border border-gray-200 rounded-xl shadow-sm p-4 bg-white transform transition hover:shadow-lg hover:scale-[1.02] hover:border-indigo-300 group">
-        <div class="flex justify-between items-start">
-          <h2 class="text-lg font-semibold text-indigo-800 truncate">{{ wf.workflowName }}</h2>
-          <div class="flex gap-2">
-            <button (click)="editWorkflow(wf)" class="text-blue-600 hover:text-blue-800" title="Edit">
-              <i-lucide [img]="Edit" class="w-4 h-4" />
-            </button>
-            <button (click)="deleteWorkflow(wf)" class="text-red-600 hover:text-red-800" title="Delete">
-              <i-lucide [img]="Trash2" class="w-4 h-4" />
-            </button>
-          </div>
+      class="relative border border-gray-200 rounded-xl shadow-sm p-4 bg-white transform transition hover:shadow-lg hover:scale-[1.02] hover:border-indigo-300 group">
+
+      <div class="flex justify-between items-start">
+        <h2 class="text-lg font-semibold text-indigo-800 truncate">{{ wf.workflowName }}</h2>
+        <div class="flex gap-2">
+          <button (click)="editWorkflow(wf)" class="text-blue-600 hover:text-blue-800" title="Edit">
+            <i-lucide [img]="Edit" class="w-4 h-4" />
+          </button>
+          <button (click)="deleteWorkflow(wf)" class="text-red-600 hover:text-red-800" title="Delete">
+            <i-lucide [img]="Trash2" class="w-4 h-4" />
+          </button>
         </div>
-        <span class="inline-block bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded mt-2">
-          {{ wf.rules.length }} {{ wf.rules.length === 1 ? 'rule' : 'rules' }}
-        </span>
       </div>
+
+      <span class="inline-block bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-0.5 rounded mt-2">
+        {{ wf.rules.length }} {{ wf.rules.length === 1 ? 'rule' : 'rules' }}
+      </span>
+
+      <!-- Auditing Info -->
+      <div *ngIf="wf.auditing" class="mt-3 text-xs text-gray-500">
+        <div><strong>Last Modified:</strong> {{ wf.auditing.lastModified | date:'medium' }}</div>
+        <div><strong>By:</strong> {{ wf.auditing.user.name }}</div>
+      </div>
+    </div>
+
     </div>
 
     <div class="flex justify-center items-center gap-4 mt-10" *ngIf="!loading && (skip() > 0 || hasMore())">
