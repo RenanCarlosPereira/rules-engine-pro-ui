@@ -1,16 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { tap, catchError, of, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GitHubUser } from '../models/github-user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private userSignal = signal<GitHubUser | null>(null);
+  private readonly userSignal = signal<GitHubUser | null>(null);
+  private readonly http = inject(HttpClient);
 
   user = computed(() => this.userSignal());
-
-  constructor(private http: HttpClient) {}
 
   loadUser(): Observable<GitHubUser | null> {
     return this.http.get<GitHubUser>(`${environment.apiUrl}/me`, { withCredentials: true }).pipe(
