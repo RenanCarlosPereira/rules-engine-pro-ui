@@ -13,6 +13,8 @@ import {
   Plus,
   ChevronRight,
   ChevronLeft,
+  Clock,
+  User,
 } from 'lucide-angular';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -20,7 +22,7 @@ import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-workflow-list',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule,],
   templateUrl: './workflow-list.component.html',
 })
 export class WorkflowListComponent implements OnInit {
@@ -48,6 +50,8 @@ export class WorkflowListComponent implements OnInit {
   Plus = Plus;
   ChevronRight = ChevronRight;
   ChevronLeft = ChevronLeft;
+  Clock = Clock;
+  User = User;
 
   ngOnInit(): void {
     this.loadWorkflows();
