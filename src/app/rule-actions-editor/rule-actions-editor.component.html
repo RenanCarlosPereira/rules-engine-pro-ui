@@ -1,19 +1,22 @@
 <h2 class="text-lg font-semibold mb-4">Edit actions</h2>
-
 <button (click)="onClose()"
   class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-xl font-bold">&times;</button>
 
 <!-- onSuccess Action -->
 <div class="mb-6">
+
   <div *ngIf="rule.actions?.onSuccess; else addonSuccess">
-    <label class="text-sm text-gray-600">onSuccess name:</label>
-    <div class="flex items-center gap-2 mt-1">
-      <input class="border p-1 text-sm rounded w-1/2" placeholder="Success action name"
-        [value]="rule.actions?.onSuccess?.name" (input)="updateActionName('onSuccess', $any($event.target).value)" />
-      <button (click)="removeAction('onSuccess')">
-        <i-lucide [img]="Trash2" class="w-4 h-4 text-red-600" />
-      </button>
-    </div>
+    <label class="text-sm text-gray-600">onSuccess:</label>
+
+    <!-- Select action -->
+
+    <select class="border p-1 text-sm rounded w-1/2 mt-1" [ngModel]="rule.actions?.onSuccess?.name"
+      (ngModelChange)="onSelectAction('onSuccess', $event)">
+      <option value="">-- choose action --</option>
+      <option *ngFor="let name of actionNames" [value]="name">
+        {{ name }}
+      </option>
+    </select>
 
     <div class="mt-2">
       <h5 class="text-xs text-gray-500 mb-1">Context</h5>
@@ -22,14 +25,7 @@
           (blur)="onContextKeyBlur('onSuccess', i, $any($event.target).value)" />
         <input class="border p-1 text-xs rounded w-2/4" [value]="rule.actions?.onSuccess?.context![key]"
           (input)="updateContextValue('onSuccess', key, $any($event.target).value)" />
-        <button (click)="deleteContextEntry('onSuccess', key)">
-          <i-lucide [img]="Trash2" class="w-4 h-4 text-red-500" />
-        </button>
       </div>
-      <button (click)="addContextEntry('onSuccess')"
-        class="text-xs flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
-        <i-lucide [img]="Plus" class="w-4 h-4" /> Add context entry
-      </button>
     </div>
   </div>
   <ng-template #addonSuccess>
@@ -43,30 +39,25 @@
 <!-- onFailure Action -->
 <div>
   <div *ngIf="rule.actions?.onFailure; else addonFailure">
-    <label class="text-sm text-gray-600">onFailure name:</label>
-    <div class="flex items-center gap-2 mt-1">
-      <input class="border p-1 text-sm rounded w-1/2" placeholder="Failure action name"
-        [value]="rule.actions?.onFailure?.name" (input)="updateActionName('onFailure', $any($event.target).value)" />
-      <button (click)="removeAction('onFailure')">
-        <i-lucide [img]="Trash2" class="w-4 h-4 text-red-600" />
-      </button>
-    </div>
+    <label class="text-sm text-gray-600">onFailure:</label>
+
+    <!-- Select action -->
+    <select class="border p-1 text-sm rounded w-1/2 mt-1" [ngModel]="rule.actions?.onFailure?.name"
+      (ngModelChange)="onSelectAction('onFailure', $event)">
+      <option value="">-- choose action --</option>
+      <option *ngFor="let name of actionNames" [value]="name">
+        {{ name }}
+      </option>
+    </select>
 
     <div class="mt-2">
       <h5 class="text-xs text-gray-500 mb-1">Context</h5>
       <div *ngFor="let key of getContextKeys('onFailure'); let i = index" class="flex gap-2 mb-2">
         <input class="border p-1 text-xs rounded w-1/4" [value]="key"
           (blur)="onContextKeyBlur('onFailure', i, $any($event.target).value)" />
-        <input class="border p-1 text-xs rounded w-2/4" [value]="rule.actions!.onFailure!.context![key]"
+        <input class="border p-1 text-xs rounded w-2/4" [value]="rule.actions?.onFailure?.context![key]"
           (input)="updateContextValue('onFailure', key, $any($event.target).value)" />
-        <button (click)="deleteContextEntry('onFailure', key)">
-          <i-lucide [img]="Trash2" class="w-4 h-4 text-red-500" />
-        </button>
       </div>
-      <button (click)="addContextEntry('onFailure')"
-        class="text-xs flex items-center gap-1 text-blue-600 text-sm mt-2 hover:underline transition-transform hover:scale-105">
-        <i-lucide [img]="Plus" class="w-4 h-4" /> Add context entry
-      </button>
     </div>
   </div>
   <ng-template #addonFailure>
