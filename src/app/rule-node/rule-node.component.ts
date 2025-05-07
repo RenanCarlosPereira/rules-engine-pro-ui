@@ -33,7 +33,7 @@ export class RuleNodeComponent implements OnInit {
   @Output() ruleChanged = new EventEmitter<void>();
 
   showActionsModal = false;
-  isExpanded = false;
+  isExpanded = true;
   confirmingOperatorClear = false;
   pendingOperator: Rule['operator'] | null = null;
   validationErrors: string[] = [];

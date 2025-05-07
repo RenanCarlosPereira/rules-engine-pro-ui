@@ -36,7 +36,7 @@ export class ExpressionBuilderComponent implements OnChanges {
 
   isBrowser = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) private readonly platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 

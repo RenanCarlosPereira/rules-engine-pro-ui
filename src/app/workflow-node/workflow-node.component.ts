@@ -225,8 +225,12 @@ export class WorkflowNodeComponent implements OnInit {
 
   applyJsonChanges(newJson: string) {
     try {
-      const parsed = JSON.parse(newJson);
-      this.workflow = parsed;
+      const cleaned = JSON.parse(
+        JSON.stringify(JSON.parse(newJson), (_, value) =>
+          value === null ? undefined : value
+        )
+      );
+      this.workflow = cleaned;
       this.workflow.globalParams ??= [];
       this.emitChange();
     } catch (error) {
